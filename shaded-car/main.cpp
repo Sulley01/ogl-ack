@@ -49,27 +49,46 @@ int main(void)
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-	// Black background
+	// Background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+	// Create Vertex Array Object
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
-
-
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f
-	};
-
+	// Create a Vertex Buffer Object and copy the vertex data to it
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
+
+	static const GLfloat g_vertex_buffer_data[] = {
+		-0.9f, -0.4f, 0.0f, 0.1f, 0.0f, 0.0f,
+		-0.9f, 0.2f, 0.0f, 0.5f, 0.0f, 0.0f,
+		-0.8f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.2f, 0.6f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.9f, 0.1f, 0.0f, 0.5f, 0.0f, 0.0f,
+		0.9f, -0.4f, 0.0f, 0.1f, 0.0f, 0.0f
+	};
+
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+	// Create an element array
+	GLuint elementbuffer;
+	glGenBuffers(1, &elementbuffer);
+
+	GLuint g_element_buffer_data[] = {
+		0, 1, 2,
+		0, 2, 3,
+		0, 3, 4,
+		0, 4, 5
+	};
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element_buffer_data), g_element_buffer_data, GL_STATIC_DRAW);
+
+	// Create and compile our GLSL program from the shaders
+	GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -78,7 +97,7 @@ int main(void)
 		3,								// size
 		GL_FLOAT,						// type
 		GL_FALSE,						// normalized?
-		sizeof(GL_FLOAT) * 6,				// stride
+		sizeof(GL_FLOAT) * 6,			// stride
 		(void*)0						// array buffer offset
 	);
 
@@ -90,7 +109,7 @@ int main(void)
 		GL_FLOAT,						// type
 		GL_FALSE,						// normalized?
 		sizeof(GL_FLOAT) * 6,			// stride
-		(void*)(sizeof(GL_FLOAT) * 3)		// array buffer offset
+		(void*)(sizeof(GL_FLOAT) * 3)	// array buffer offset
 	);
 
 	do {
@@ -101,10 +120,9 @@ int main(void)
 		// Use our shader
 		glUseProgram(programID);
 
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
-										  // Swap buffers
+		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
@@ -115,6 +133,7 @@ int main(void)
 	glDisableVertexAttribArray(0);
 
 	// Cleanup VBO
+	glDeleteBuffers(1, &elementbuffer);
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteVertexArrays(1, &VertexArrayID);
 	glDeleteProgram(programID);
