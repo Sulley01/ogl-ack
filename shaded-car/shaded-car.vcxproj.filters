@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\shader.cpp">
+    <ClCompile Include="..\..\External Resources\Include\common\shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
