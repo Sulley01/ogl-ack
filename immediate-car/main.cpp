@@ -1,287 +1,126 @@
-// Include standard headers
-#include <stdio.h>
-#include <stdlib.h>
-
-// Include GLEW
-#include <GL/glew.h>
-
-// Include GLFW
+﻿#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#define _USE_MATH_DEFINES
 #include <math.h>
+
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 768
+
+void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides)
+{
+	int i;
+
+	GLfloat twicePi = 2.0f * M_PI;
+
+	glPushMatrix();
+	glBegin(GL_TRIANGLE_FAN);
+	glVertex2f(x, y); // center of circle
+	for (i = 0; i <= numberOfSides; i++) {
+		glVertex2f(
+			x + (radius * cos(i * twicePi / numberOfSides)),
+			y + (radius * sin(i * twicePi / numberOfSides))
+		);
+	}
+	glEnd();
+	glPopMatrix();
+}
 
 int main(void)
 {
-	// Initialise GLFW
+	GLFWwindow *window;
+
+	// Initialize the library
 	if (!glfwInit())
 	{
-		fprintf(stderr, "Failed to initialize GLFW\n");
-		getchar();
 		return -1;
 	}
 
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// Create a windowed mode window and its OpenGL context
+	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Immediate Car", NULL, NULL);
 
-	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(1024, 768, "Immediate Car", NULL, NULL);
-	if (window == NULL) {
-		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
-		getchar();
+	if (!window)
+	{
 		glfwTerminate();
 		return -1;
 	}
+
+	// Make the window's context current
 	glfwMakeContextCurrent(window);
 
-	// Initialize GLEW
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		getchar();
-		glfwTerminate();
-		return -1;
-	}
+	glViewport(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
+	glMatrixMode(GL_PROJECTION); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
+	glLoadIdentity(); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
+	glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 0, 1); // essentially set coordinate system
+	glMatrixMode(GL_MODELVIEW); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
+	glLoadIdentity(); // same as above comment
 
-	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
-	// Background
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-	GLfloat g_vertex_buffer_data[] = {
-		-0.9f, -0.4f, 0.0f,
-		-0.9f, 0.2f, 0.0f,
-		-0.8f, 0.6f, 0.0f,
-		0.2f, 0.6f, 0.0f,
-		0.9f, 0.1f, 0.0f,
-		0.9f, -0.4f, 0.0f,
-	};
-
-	GLfloat g_vertex2_buffer_data[] = {
-		-0.7f, -0.45f, 0.0f,
-		-0.7f, -0.35f, 0.0f,
-		-0.6f, -0.25f, 0.0f,
-		-0.5f, -0.35f, 0.0f,
-		-0.5f, -0.45f, 0.0f,
-		-0.6f, -0.55f, 0.0f,
-	};
-
-	GLfloat g_vertex3_buffer_data[] = {
-		0.7f, -0.45f, 0.0f,
-		0.7f, -0.35f, 0.0f,
-		0.6f, -0.25f, 0.0f,
-		0.5f, -0.35f, 0.0f,
-		0.5f, -0.45f, 0.0f,
-		0.6f, -0.55f, 0.0f,
-	};
-
-	GLuint g_element_buffer_data[] = {
-		0, 1, 2,
-		0, 2, 3,
-		0, 3, 4,
-		0, 4, 5,
-	};
-
-	GLuint g_element2_buffer_data[] = {
-		0, 1, 2,
-		0, 2, 3,
-		0, 3, 4,
-		0, 4, 5,
-	};
-
-	GLuint g_element3_buffer_data[] = {
-		0, 1, 2,
-		0, 2, 3,
-		0, 3, 4,
-		0, 4, 5,
-	};
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // polygon drawing mode (GL_POINT, GL_LINE, GL_FILL)
 	
-	// Object 1
-	// Create Vertex Array Object
-	GLuint VertexArrayID;
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
+	float angle = 0;
 
-	// Create a Vertex Buffer Object and copy the vertex data to it
-	GLuint vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-	// 1rst attribute buffer : vertices
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	);
-
-	// Create an element array
-	GLuint elementbuffer;
-	glGenBuffers(1, &elementbuffer);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element_buffer_data), g_element_buffer_data, GL_STATIC_DRAW);
-
-	// Object 2
-	// Create Vertex Array Object
-	GLuint VertexArrayID2;
-	glGenVertexArrays(1, &VertexArrayID2);
-	glBindVertexArray(VertexArrayID2);
-
-	// Create a Vertex Buffer Object and copy the vertex data to it
-	GLuint vertexbuffer2;
-	glGenBuffers(1, &vertexbuffer2);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex2_buffer_data), g_vertex2_buffer_data, GL_STATIC_DRAW);
-
-	// 2nd attribute buffer : vertices
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	);
-
-	// Create an element array
-	GLuint elementbuffer2;
-	glGenBuffers(1, &elementbuffer2);
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element2_buffer_data), g_element2_buffer_data, GL_STATIC_DRAW);
-
-	// Object 3
-	// Create Vertex Array Object
-	GLuint VertexArrayID3;
-	glGenVertexArrays(1, &VertexArrayID3);
-	glBindVertexArray(VertexArrayID3);
-
-	// Create a Vertex Buffer Object and copy the vertex data to it
-	GLuint vertexbuffer3;
-	glGenBuffers(1, &vertexbuffer3);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex3_buffer_data), g_vertex3_buffer_data, GL_STATIC_DRAW);
-
-	// 3rd attribute buffer : vertices
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	);
-
-	// Create an element array
-	GLuint elementbuffer3;
-	glGenBuffers(1, &elementbuffer3);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element3_buffer_data), g_element3_buffer_data, GL_STATIC_DRAW);
-
-	glm::mat4 trans = glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(-0.1f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-	do {
-		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
+	// Loop until the user closes the window
+	while (!glfwWindowShouldClose(window))
+	{
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		// Car
 
-		// Draw object 1
-		glBindVertexArray(VertexArrayID);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glLoadIdentity();
 
-		// Draw object 2
-		for (int i = 0; i < 18; i += 3) {
-			g_vertex2_buffer_data[i] -= -0.6f;
-			g_vertex2_buffer_data[i+1] -= -0.4f;
-			glm::vec4 result = trans * glm::vec4(g_vertex2_buffer_data[i], g_vertex2_buffer_data[i + 1], 0.0f, 1.0f);
-			g_vertex2_buffer_data[i] = result.x - 0.6f;
-			g_vertex2_buffer_data[i + 1] = result.y - 0.4f;
-		}
-		glBindVertexArray(VertexArrayID2);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex2_buffer_data), g_vertex2_buffer_data, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glRotatef(0.0, 0, 0, 1);
+		
+		glColor3f(0.75, 0.75, 0.75);
+		glPushMatrix();
+		glBegin(GL_POLYGON);
+		glVertex3f(51.2, 230.4, 0);
+		glVertex3f(51.2, 460.8, 0);
+		glVertex3f(102.4, 614.4, 0);
+		glVertex3f(614.4, 614.4, 0);
+		glVertex3f(972.8, 422.4, 0);
+		glVertex3f(972.8, 230.4, 0);
+		glEnd();
+		glPopMatrix();
 
-		// Draw object 3
-		for (int i = 0; i < 18; i += 3) {
-			g_vertex3_buffer_data[i] -= 0.6f;
-			g_vertex3_buffer_data[i + 1] -= -0.4f;
-			glm::vec4 result = trans * glm::vec4(g_vertex3_buffer_data[i], g_vertex3_buffer_data[i + 1], 0.0f, 1.0f);
-			g_vertex3_buffer_data[i] = result.x + 0.6f;
-			g_vertex3_buffer_data[i + 1] = result.y - 0.4f;
-		}
-		glBindVertexArray(VertexArrayID3);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex3_buffer_data), g_vertex3_buffer_data, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		// Back wheel
 
-		glDisableVertexAttribArray(0);
+		glLoadIdentity();
 
-		// Swap buffers
+		glTranslatef(183.6, 230.4, 0);
+		glRotatef(angle, 0, 0, 1);
+		glTranslatef(-183.6, -230.4, 0);
+
+		glColor3f(0.25, 0.25, 0.25);
+		drawCircle(183.6, 230.4, 0, 102.4, 30);
+		glColor3f(0, 0, 0);
+		drawCircle(153.6, 230.4, 0, 10, 30);
+		drawCircle(183.6, 260.4, 0, 10, 30);
+		drawCircle(213.6, 230.4, 0, 10, 30);
+		drawCircle(183.6, 200.4, 0, 10, 30);
+
+		glLoadIdentity();
+
+		glTranslatef(840.4, 230.4, 0);
+		glRotatef(angle, 0, 0, 1);
+		glTranslatef(-840.4, -230.4, 0);
+
+		glColor3f(0.25, 0.25, 0.25);
+		drawCircle(840.4, 230.4, 0, 102.4, 30);
+		glColor3f(0, 0, 0);
+		drawCircle(810.4, 230.4, 0, 10, 30);
+		drawCircle(840.4, 260.4, 0, 10, 30);
+		drawCircle(870.4, 230.4, 0, 10, 30);
+		drawCircle(840.4, 200.4, 0, 10, 30);
+
+		// Swap front and back buffers
 		glfwSwapBuffers(window);
+
+		// Poll for and process events
 		glfwPollEvents();
 
-	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-		glfwWindowShouldClose(window) == 0);
+		angle-=0.1;
+	}
 
-	// Cleanup VBO
-	glDeleteBuffers(1, &elementbuffer);
-	glDeleteBuffers(1, &vertexbuffer);
-	glDeleteVertexArrays(1, &VertexArrayID);
-	glDeleteVertexArrays(1, &VertexArrayID2);
-
-	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
 
 	return 0;
