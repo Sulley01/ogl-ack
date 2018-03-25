@@ -9,6 +9,12 @@
 #include <GLFW/glfw3.h>
 GLFWwindow* window;
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <math.h>
+
 int main(void)
 {
 	// Initialise GLFW
@@ -49,6 +55,55 @@ int main(void)
 	// Background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+	GLfloat g_vertex_buffer_data[] = {
+		-0.9f, -0.4f, 0.0f,
+		-0.9f, 0.2f, 0.0f,
+		-0.8f, 0.6f, 0.0f,
+		0.2f, 0.6f, 0.0f,
+		0.9f, 0.1f, 0.0f,
+		0.9f, -0.4f, 0.0f,
+	};
+
+	GLfloat g_vertex2_buffer_data[] = {
+		-0.7f, -0.45f, 0.0f,
+		-0.7f, -0.35f, 0.0f,
+		-0.6f, -0.25f, 0.0f,
+		-0.5f, -0.35f, 0.0f,
+		-0.5f, -0.45f, 0.0f,
+		-0.6f, -0.55f, 0.0f,
+	};
+
+	GLfloat g_vertex3_buffer_data[] = {
+		0.7f, -0.45f, 0.0f,
+		0.7f, -0.35f, 0.0f,
+		0.6f, -0.25f, 0.0f,
+		0.5f, -0.35f, 0.0f,
+		0.5f, -0.45f, 0.0f,
+		0.6f, -0.55f, 0.0f,
+	};
+
+	GLuint g_element_buffer_data[] = {
+		0, 1, 2,
+		0, 2, 3,
+		0, 3, 4,
+		0, 4, 5,
+	};
+
+	GLuint g_element2_buffer_data[] = {
+		0, 1, 2,
+		0, 2, 3,
+		0, 3, 4,
+		0, 4, 5,
+	};
+
+	GLuint g_element3_buffer_data[] = {
+		0, 1, 2,
+		0, 2, 3,
+		0, 3, 4,
+		0, 4, 5,
+	};
+	
+	// Object 1
 	// Create Vertex Array Object
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
@@ -58,35 +113,11 @@ int main(void)
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
 
-	static const GLfloat g_vertex_buffer_data[] = {
-		-0.9f, -0.4f, 0.0f,
-		-0.9f, 0.2f, 0.0f,
-		-0.8f, 0.6f, 0.0f,
-		0.2f, 0.6f, 0.0f,
-		0.9f, 0.1f, 0.0f,
-		0.9f, -0.4f, 0.0f
-	};
-
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	// Create an element array
-	GLuint elementbuffer;
-	glGenBuffers(1, &elementbuffer);
-
-	GLuint g_element_buffer_data[] = {
-		0, 1, 2,
-		0, 2, 3,
-		0, 3, 4,
-		0, 4, 5
-	};
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element_buffer_data), g_element_buffer_data, GL_STATIC_DRAW);
-
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 	glVertexAttribPointer(
 		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 		3,                  // size
@@ -96,13 +127,145 @@ int main(void)
 		(void*)0            // array buffer offset
 	);
 
+	// Create an element array
+	GLuint elementbuffer;
+	glGenBuffers(1, &elementbuffer);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element_buffer_data), g_element_buffer_data, GL_STATIC_DRAW);
+
+	// Object 2
+	// Create Vertex Array Object
+	GLuint VertexArrayID2;
+	glGenVertexArrays(1, &VertexArrayID2);
+	glBindVertexArray(VertexArrayID2);
+
+	// Create a Vertex Buffer Object and copy the vertex data to it
+	GLuint vertexbuffer2;
+	glGenBuffers(1, &vertexbuffer2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex2_buffer_data), g_vertex2_buffer_data, GL_STATIC_DRAW);
+
+	// 2nd attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+	);
+
+	// Create an element array
+	GLuint elementbuffer2;
+	glGenBuffers(1, &elementbuffer2);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element2_buffer_data), g_element2_buffer_data, GL_STATIC_DRAW);
+
+	// Object 3
+	// Create Vertex Array Object
+	GLuint VertexArrayID3;
+	glGenVertexArrays(1, &VertexArrayID3);
+	glBindVertexArray(VertexArrayID3);
+
+	// Create a Vertex Buffer Object and copy the vertex data to it
+	GLuint vertexbuffer3;
+	glGenBuffers(1, &vertexbuffer3);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex3_buffer_data), g_vertex3_buffer_data, GL_STATIC_DRAW);
+
+	// 3rd attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+	);
+
+	// Create an element array
+	GLuint elementbuffer3;
+	glGenBuffers(1, &elementbuffer3);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element3_buffer_data), g_element3_buffer_data, GL_STATIC_DRAW);
+
+	glm::mat4 trans = glm::mat4(1.0f);
+	trans = glm::rotate(trans, glm::radians(-0.1f), glm::vec3(0.0f, 0.0f, 1.0f));
+
 	do {
 		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		
-		// Draw
+		// Draw object 1
+		glBindVertexArray(VertexArrayID);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+
+		// Draw object 2
+		for (int i = 0; i < 18; i += 3) {
+			g_vertex2_buffer_data[i] -= -0.6f;
+			g_vertex2_buffer_data[i+1] -= -0.4f;
+			glm::vec4 result = trans * glm::vec4(g_vertex2_buffer_data[i], g_vertex2_buffer_data[i + 1], 0.0f, 1.0f);
+			g_vertex2_buffer_data[i] = result.x - 0.6f;
+			g_vertex2_buffer_data[i + 1] = result.y - 0.4f;
+		}
+		glBindVertexArray(VertexArrayID2);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex2_buffer_data), g_vertex2_buffer_data, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+
+		// Draw object 3
+		for (int i = 0; i < 18; i += 3) {
+			g_vertex3_buffer_data[i] -= 0.6f;
+			g_vertex3_buffer_data[i + 1] -= -0.4f;
+			glm::vec4 result = trans * glm::vec4(g_vertex3_buffer_data[i], g_vertex3_buffer_data[i + 1], 0.0f, 1.0f);
+			g_vertex3_buffer_data[i] = result.x + 0.6f;
+			g_vertex3_buffer_data[i + 1] = result.y - 0.4f;
+		}
+		glBindVertexArray(VertexArrayID3);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex3_buffer_data), g_vertex3_buffer_data, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+
+		glDisableVertexAttribArray(0);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -112,12 +275,11 @@ int main(void)
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(window) == 0);
 
-	glDisableVertexAttribArray(0);
-
 	// Cleanup VBO
 	glDeleteBuffers(1, &elementbuffer);
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteVertexArrays(1, &VertexArrayID2);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
