@@ -228,7 +228,7 @@ int main(void)
 	// Send our transformation to the currently bound shader, 
 	// in the "MVP" uniform
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
-	
+
 	// Send our transformation to the currently bound shader, 
 	// in the "MVP" uniform
 	glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP2[0][0]);
