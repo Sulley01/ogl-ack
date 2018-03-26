@@ -67,21 +67,25 @@ int main(void)
 	};
 
 	GLfloat g_vertex2_buffer_data[] = {
-		-0.7f, -0.45f, 0.0f,
-		-0.7f, -0.35f, 0.0f,
-		-0.6f, -0.25f, 0.0f,
-		-0.5f, -0.35f, 0.0f,
-		-0.5f, -0.45f, 0.0f,
-		-0.6f, -0.55f, 0.0f,
+		-0.6f, -0.2f, 0.0f,
+		-0.45f, -0.25f, 0.0f,
+		-0.4f, -0.4f, 0.0f,
+		-0.45f, -0.55f, 0.0f,
+		-0.6f, -0.6f, 0.0f,
+		-0.75f, -0.55f, 0.0f,
+		-0.8f, -0.4f, 0.0f,
+		-0.75f, -0.25f, 0.0f
 	};
 
 	GLfloat g_vertex3_buffer_data[] = {
-		0.7f, -0.45f, 0.0f,
-		0.7f, -0.35f, 0.0f,
-		0.6f, -0.25f, 0.0f,
-		0.5f, -0.35f, 0.0f,
-		0.5f, -0.45f, 0.0f,
-		0.6f, -0.55f, 0.0f,
+		0.6f, -0.2f, 0.0f,
+		0.45f, -0.25f, 0.0f,
+		0.4f, -0.4f, 0.0f,
+		0.45f, -0.55f, 0.0f,
+		0.6f, -0.6f, 0.0f,
+		0.75f, -0.55f, 0.0f,
+		0.8f, -0.4f, 0.0f,
+		0.75f, -0.25f, 0.0f
 	};
 
 	GLuint g_element_buffer_data[] = {
@@ -96,6 +100,8 @@ int main(void)
 		0, 2, 3,
 		0, 3, 4,
 		0, 4, 5,
+		0, 5, 6,
+		0, 6, 7
 	};
 
 	GLuint g_element3_buffer_data[] = {
@@ -103,6 +109,8 @@ int main(void)
 		0, 2, 3,
 		0, 3, 4,
 		0, 4, 5,
+		0, 5, 6,
+		0, 6, 7
 	};
 
 	// Object 1
@@ -276,7 +284,7 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
 
 		// Use our shader
 		glUseProgram(programID3);
@@ -298,7 +306,7 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);
 
