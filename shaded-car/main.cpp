@@ -150,9 +150,9 @@ int main(void)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex2_buffer_data), g_vertex2_buffer_data, GL_STATIC_DRAW);
 
 	// 2nd attribute buffer : vertices
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 		3,                  // size
 		GL_FLOAT,           // type
 		GL_FALSE,           // normalized?
@@ -181,9 +181,9 @@ int main(void)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex3_buffer_data), g_vertex3_buffer_data, GL_STATIC_DRAW);
 
 	// 3rd attribute buffer : vertices
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		2,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 		3,                  // size
 		GL_FLOAT,           // type
 		GL_FALSE,           // normalized?
@@ -199,17 +199,39 @@ int main(void)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element3_buffer_data), g_element3_buffer_data, GL_STATIC_DRAW);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+	GLuint programID = LoadShaders("CarVertexShader.vertexshader", "CarFragmentShader.fragmentshader");
 
+	GLuint programID2 = LoadShaders("BackWheelVertexShader.vertexshader", "WheelFragmentShader.fragmentshader");
 	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	GLuint MatrixID = glGetUniformLocation(programID2, "MVP1");
+
+	GLuint programID3 = LoadShaders("FrontWheelVertexShader.vertexshader", "WheelFragmentShader.fragmentshader");
+	// Get a handle for our "MVP" uniform
+	GLuint MatrixID2 = glGetUniformLocation(programID3, "MVP2");
 
 	float angle = 0;
 
-	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::mat4 translation2 = glm::translate(glm::mat4(1.0f), glm::vec3(-0.0f, -0.0f, 0.0f));
-	glm::mat4 MVP = translation2 * rotation * translation;
+	glm::mat4 translation1a, translation1b, translation2a, translation2b, rotation, translation2, MVP1, MVP2;
+
+	// MVP back wheel
+	translation1a = glm::translate(glm::mat4(1.0f), glm::vec3(0.6f, 0.4f, 0.0f));
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+	translation1b = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, -0.4f, 0.0f));
+	MVP1 = translation1b * rotation * translation1a;
+
+	// MVP front wheel
+	translation2a = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, 0.4f, 0.0f));
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+	translation2b = glm::translate(glm::mat4(1.0f), glm::vec3(0.6f, -0.4f, 0.0f));
+	MVP2 = translation2b * rotation * translation2a;
+
+	// Send our transformation to the currently bound shader, 
+	// in the "MVP" uniform
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
+	
+	// Send our transformation to the currently bound shader, 
+	// in the "MVP" uniform
+	glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP2[0][0]);
 
 	do {
 		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
@@ -232,25 +254,21 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
+		// Use our shader
+		glUseProgram(programID2);
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-		// Rotate object 2
-		translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.6f, 0.4f, 0.0f));
-		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
-		translation2 = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, -0.4f, 0.0f));
-		MVP = translation2 * rotation * translation;
-
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP1[0][0]);
 
 		// Draw object 2
 		glBindVertexArray(VertexArrayID2);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex2_buffer_data), g_vertex2_buffer_data, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 			3,                  // size
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
@@ -258,25 +276,21 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
+		// Use our shader
+		glUseProgram(programID3);
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-		// Rotate object 3
-		translation = glm::translate(glm::mat4(1.0f), glm::vec3(-0.6f, 0.4f, 0.0f));
-		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
-		translation2 = glm::translate(glm::mat4(1.0f), glm::vec3(0.6f, -0.4f, 0.0f));
-		MVP = translation2 * rotation * translation;
-
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP2[0][0]);
 
 		// Draw object 3
 		glBindVertexArray(VertexArrayID3);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex3_buffer_data), g_vertex3_buffer_data, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			2,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 			3,                  // size
 			GL_FLOAT,           // type
 			GL_FALSE,           // normalized?
@@ -284,27 +298,21 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
-
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-		// Rotate object 1
-		translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		translation2 = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-		MVP = translation2 * rotation * translation;
-
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
 		angle -= 1.0f;
+
+		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+		// MVP back wheel
+		MVP1 = translation1b * rotation * translation1a;
+		// MVP front wheel
+		MVP2 = translation2b * rotation * translation2a;
 
 	} // Check if the ESC key was pressed or the window was closed
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
@@ -321,6 +329,8 @@ int main(void)
 	glDeleteVertexArrays(1, &VertexArrayID2);
 	glDeleteVertexArrays(1, &VertexArrayID3);
 	glDeleteProgram(programID);
+	glDeleteProgram(programID2);
+	glDeleteProgram(programID3);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
