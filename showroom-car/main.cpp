@@ -35,7 +35,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(1024, 768, "Shaded Car", NULL, NULL);
+	window = glfwCreateWindow(1024, 768, "Showroom Car", NULL, NULL);
 	if (window == NULL) {
 		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
 		getchar();
@@ -64,43 +64,98 @@ int main(void)
 	// Background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// Enable depth test
-	//glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
-	// Cull triangles which normal is not towards the camera
-	//glEnable(GL_CULL_FACE);
+	GLfloat half_car_width = 0.3f;
 
 	GLfloat g_vertex_buffer_data[] = {
-		-0.9f, -0.4f, 0.0f,
-		-0.9f, 0.2f, 0.0f,
-		-0.8f, 0.6f, 0.0f,
-		0.2f, 0.6f, 0.0f,
-		0.9f, 0.1f, 0.0f,
-		0.9f, -0.4f, 0.0f,
+		-0.9f, -0.4f, half_car_width,
+		-0.9f, 0.2f, half_car_width,
+		-0.8f, 0.6f, half_car_width,
+		0.2f, 0.6f, half_car_width,
+		0.9f, 0.1f, half_car_width,
+		0.9f, -0.4f, half_car_width,
+		-0.9f, -0.4f, 0-half_car_width,
+		-0.9f, 0.2f, 0-half_car_width,
+		-0.8f, 0.6f, 0-half_car_width,
+		0.2f, 0.6f, 0-half_car_width,
+		0.9f, 0.1f, 0-half_car_width,
+		0.9f, -0.4f, 0-half_car_width
 	};
 
+	GLfloat half_wheel_width = 0.1f;
+
 	GLfloat g_vertex2_buffer_data[] = {
-		-0.6f, -0.2f, 0.0f,
-		-0.45f, -0.25f, 0.0f,
-		-0.4f, -0.4f, 0.0f,
-		-0.45f, -0.55f, 0.0f,
-		-0.6f, -0.6f, 0.0f,
-		-0.75f, -0.55f, 0.0f,
-		-0.8f, -0.4f, 0.0f,
-		-0.75f, -0.25f, 0.0f
+		-0.6f, -0.2f, half_car_width,
+		-0.45f, -0.25f, half_car_width,
+		-0.4f, -0.4f, half_car_width,
+		-0.45f, -0.55f, half_car_width,
+		-0.6f, -0.6f, half_car_width,
+		-0.75f, -0.55f, half_car_width,
+		-0.8f, -0.4f, half_car_width,
+		-0.75f, -0.25f, half_car_width,
+		-0.6f, -0.2f, half_car_width-half_wheel_width,
+		-0.45f, -0.25f, half_car_width-half_wheel_width,
+		-0.4f, -0.4f, half_car_width-half_wheel_width,
+		-0.45f, -0.55f, half_car_width-half_wheel_width,
+		-0.6f, -0.6f, half_car_width-half_wheel_width,
+		-0.75f, -0.55f, half_car_width-half_wheel_width,
+		-0.8f, -0.4f, half_car_width-half_wheel_width,
+		-0.75f, -0.25f, half_car_width-half_wheel_width,
+
+		-0.6f, -0.2f, 0-half_car_width,
+		-0.45f, -0.25f, 0-half_car_width,
+		-0.4f, -0.4f, 0-half_car_width,
+		-0.45f, -0.55f, 0-half_car_width,
+		-0.6f, -0.6f, 0-half_car_width,
+		-0.75f, -0.55f, 0-half_car_width,
+		-0.8f, -0.4f, 0-half_car_width,
+		-0.75f, -0.25f, 0-half_car_width,
+		-0.6f, -0.2f, 0-half_car_width + half_wheel_width,
+		-0.45f, -0.25f, 0-half_car_width + half_wheel_width,
+		-0.4f, -0.4f, 0-half_car_width + half_wheel_width,
+		-0.45f, -0.55f, 0-half_car_width + half_wheel_width,
+		-0.6f, -0.6f, 0-half_car_width + half_wheel_width,
+		-0.75f, -0.55f, 0-half_car_width + half_wheel_width,
+		-0.8f, -0.4f, 0-half_car_width + half_wheel_width,
+		-0.75f, -0.25f, 0-half_car_width + half_wheel_width
 	};
 
 	GLfloat g_vertex3_buffer_data[] = {
-		0.6f, -0.2f, 0.0f,
-		0.45f, -0.25f, 0.0f,
-		0.4f, -0.4f, 0.0f,
-		0.45f, -0.55f, 0.0f,
-		0.6f, -0.6f, 0.0f,
-		0.75f, -0.55f, 0.0f,
-		0.8f, -0.4f, 0.0f,
-		0.75f, -0.25f, 0.0f
+		0.6f, -0.2f, half_car_width,
+		0.45f, -0.25f, half_car_width,
+		0.4f, -0.4f, half_car_width,
+		0.45f, -0.55f, half_car_width,
+		0.6f, -0.6f, half_car_width,
+		0.75f, -0.55f, half_car_width,
+		0.8f, -0.4f, half_car_width,
+		0.75f, -0.25f, half_car_width,
+		0.6f, -0.2f, half_car_width-half_wheel_width,
+		0.45f, -0.25f, half_car_width-half_wheel_width,
+		0.4f, -0.4f, half_car_width-half_wheel_width,
+		0.45f, -0.55f, half_car_width-half_wheel_width,
+		0.6f, -0.6f, half_car_width-half_wheel_width,
+		0.75f, -0.55f, half_car_width-half_wheel_width,
+		0.8f, -0.4f, half_car_width-half_wheel_width,
+		0.75f, -0.25f, half_car_width-half_wheel_width,
+
+		0.6f, -0.2f, 0-half_car_width,
+		0.45f, -0.25f, 0-half_car_width,
+		0.4f, -0.4f, 0-half_car_width,
+		0.45f, -0.55f, 0-half_car_width,
+		0.6f, -0.6f, 0-half_car_width,
+		0.75f, -0.55f, 0-half_car_width,
+		0.8f, -0.4f, 0-half_car_width,
+		0.75f, -0.25f, 0-half_car_width,
+		0.6f, -0.2f, 0-half_car_width + half_wheel_width,
+		0.45f, -0.25f, 0-half_car_width + half_wheel_width,
+		0.4f, -0.4f, 0-half_car_width + half_wheel_width,
+		0.45f, -0.55f, 0-half_car_width + half_wheel_width,
+		0.6f, -0.6f, 0-half_car_width + half_wheel_width,
+		0.75f, -0.55f, 0-half_car_width + half_wheel_width,
+		0.8f, -0.4f, 0-half_car_width + half_wheel_width,
+		0.75f, -0.25f, 0-half_car_width + half_wheel_width
 	};
 
 	GLuint g_element_buffer_data[] = {
@@ -108,6 +163,22 @@ int main(void)
 		0, 2, 3,
 		0, 3, 4,
 		0, 4, 5,
+		6, 7, 8,
+		6, 8, 9,
+		6, 9, 10,
+		6, 10, 11,
+		0, 1, 6,
+		1, 2, 7,
+		2, 3, 8,
+		3, 4, 9,
+		4, 5, 10,
+		5, 0, 11,
+		6, 7, 1,
+		7, 8, 2,
+		8, 9, 3,
+		9, 10, 4,
+		10, 11, 5,
+		11, 6, 0,
 	};
 
 	GLuint g_element2_buffer_data[] = {
@@ -116,7 +187,58 @@ int main(void)
 		0, 3, 4,
 		0, 4, 5,
 		0, 5, 6,
-		0, 6, 7
+		0, 6, 7,
+		8, 9, 10,
+		8, 10, 11,
+		8, 11, 12,
+		8, 12, 13,
+		8, 13, 14,
+		8, 14, 15,
+		0, 1, 8,
+		1, 2, 9,
+		2, 3, 10,
+		3, 4, 11,
+		4, 5, 12,
+		5, 6, 13,
+		6, 7, 14,
+		7, 0, 15,
+		8, 9, 1,
+		9, 10, 2,
+		10, 11, 3,
+		11, 12, 4,
+		12, 13, 5,
+		13, 14, 6,
+		14, 15, 7,
+		15, 8, 0,
+
+		0 + 16, 1 + 16, 2 + 16,
+		0 + 16, 2 + 16, 3 + 16,
+		0 + 16, 3 + 16, 4 + 16,
+		0 + 16, 4 + 16, 5 + 16,
+		0 + 16, 5 + 16, 6 + 16,
+		0 + 16, 6 + 16, 7 + 16,
+		8 + 16, 9 + 16, 10 + 16,
+		8 + 16, 10 + 16, 11 + 16,
+		8 + 16, 11 + 16, 12 + 16,
+		8 + 16, 12 + 16, 13 + 16,
+		8 + 16, 13 + 16, 14 + 16,
+		8 + 16, 14 + 16, 15 + 16,
+		0 + 16, 1 + 16, 8 + 16,
+		1 + 16, 2 + 16, 9 + 16,
+		2 + 16, 3 + 16, 10 + 16,
+		3 + 16, 4 + 16, 11 + 16,
+		4 + 16, 5 + 16, 12 + 16,
+		5 + 16, 6 + 16, 13 + 16,
+		6 + 16, 7 + 16, 14 + 16,
+		7 + 16, 0 + 16, 15 + 16,
+		8 + 16, 9 + 16, 1 + 16,
+		9 + 16, 10 + 16, 2 + 16,
+		10 + 16, 11 + 16, 3 + 16,
+		11 + 16, 12 + 16, 4 + 16,
+		12 + 16, 13 + 16, 5 + 16,
+		13 + 16, 14 + 16, 6 + 16,
+		14 + 16, 15 + 16, 7 + 16,
+		15 + 16, 8 + 16, 0 + 16
 	};
 
 	GLuint g_element3_buffer_data[] = {
@@ -125,7 +247,58 @@ int main(void)
 		0, 3, 4,
 		0, 4, 5,
 		0, 5, 6,
-		0, 6, 7
+		0, 6, 7,
+		8, 9, 10,
+		8, 10, 11,
+		8, 11, 12,
+		8, 12, 13,
+		8, 13, 14,
+		8, 14, 15,
+		0, 1, 8,
+		1, 2, 9,
+		2, 3, 10,
+		3, 4, 11,
+		4, 5, 12,
+		5, 6, 13,
+		6, 7, 14,
+		7, 0, 15,
+		8, 9, 1,
+		9, 10, 2,
+		10, 11, 3,
+		11, 12, 4,
+		12, 13, 5,
+		13, 14, 6,
+		14, 15, 7,
+		15, 8, 0,
+
+		0 + 16, 1 + 16, 2 + 16,
+		0 + 16, 2 + 16, 3 + 16,
+		0 + 16, 3 + 16, 4 + 16,
+		0 + 16, 4 + 16, 5 + 16,
+		0 + 16, 5 + 16, 6 + 16,
+		0 + 16, 6 + 16, 7 + 16,
+		8 + 16, 9 + 16, 10 + 16,
+		8 + 16, 10 + 16, 11 + 16,
+		8 + 16, 11 + 16, 12 + 16,
+		8 + 16, 12 + 16, 13 + 16,
+		8 + 16, 13 + 16, 14 + 16,
+		8 + 16, 14 + 16, 15 + 16,
+		0 + 16, 1 + 16, 8 + 16,
+		1 + 16, 2 + 16, 9 + 16,
+		2 + 16, 3 + 16, 10 + 16,
+		3 + 16, 4 + 16, 11 + 16,
+		4 + 16, 5 + 16, 12 + 16,
+		5 + 16, 6 + 16, 13 + 16,
+		6 + 16, 7 + 16, 14 + 16,
+		7 + 16, 0 + 16, 15 + 16,
+		8 + 16, 9 + 16, 1 + 16,
+		9 + 16, 10 + 16, 2 + 16,
+		10 + 16, 11 + 16, 3 + 16,
+		11 + 16, 12 + 16, 4 + 16,
+		12 + 16, 13 + 16, 5 + 16,
+		13 + 16, 14 + 16, 6 + 16,
+		14 + 16, 15 + 16, 7 + 16,
+		15 + 16, 8 + 16, 0 + 16
 	};
 
 	// Object 1
@@ -137,7 +310,6 @@ int main(void)
 	// Create a Vertex Buffer Object and copy the vertex data to it
 	GLuint vertexbuffer;
 	glGenBuffers(1, &vertexbuffer);
-
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
@@ -155,7 +327,6 @@ int main(void)
 	// Create an element array
 	GLuint elementbuffer;
 	glGenBuffers(1, &elementbuffer);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element_buffer_data), g_element_buffer_data, GL_STATIC_DRAW);
 
@@ -168,7 +339,6 @@ int main(void)
 	// Create a Vertex Buffer Object and copy the vertex data to it
 	GLuint vertexbuffer2;
 	glGenBuffers(1, &vertexbuffer2);
-
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex2_buffer_data), g_vertex2_buffer_data, GL_STATIC_DRAW);
 
@@ -186,7 +356,6 @@ int main(void)
 	// Create an element array
 	GLuint elementbuffer2;
 	glGenBuffers(1, &elementbuffer2);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element2_buffer_data), g_element2_buffer_data, GL_STATIC_DRAW);
 
@@ -199,7 +368,6 @@ int main(void)
 	// Create a Vertex Buffer Object and copy the vertex data to it
 	GLuint vertexbuffer3;
 	glGenBuffers(1, &vertexbuffer3);
-
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer3);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex3_buffer_data), g_vertex3_buffer_data, GL_STATIC_DRAW);
 
@@ -217,7 +385,6 @@ int main(void)
 	// Create an element array
 	GLuint elementbuffer3;
 	glGenBuffers(1, &elementbuffer3);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_element3_buffer_data), g_element3_buffer_data, GL_STATIC_DRAW);
 
@@ -293,7 +460,7 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 60, GL_UNSIGNED_INT, 0);
 
 		// Use our shader
 		glUseProgram(programID2);
@@ -316,7 +483,7 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer2);
-		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 168, GL_UNSIGNED_INT, 0);
 
 		// Use our shader
 		glUseProgram(programID3);
@@ -339,7 +506,7 @@ int main(void)
 			(void*)0            // array buffer offset
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer3);
-		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 168, GL_UNSIGNED_INT, 0);
 
 		glDisableVertexAttribArray(0);
 
