@@ -2,12 +2,12 @@
 
 // Input vertex data, different for all executions of this shader.
 layout(location = 2) in vec3 vertexPosition_modelspace;
-uniform mat4 MVP2;
-uniform mat4 MVP;
+uniform mat4 FrontwheelRotationMVP;
+uniform mat4 FrontwheelCameraMVP;
 
 void main(){
 
-    gl_Position = MVP * MVP2 * vec4(vertexPosition_modelspace, 1);
+    gl_Position = FrontwheelCameraMVP * FrontwheelRotationMVP * vec4(vertexPosition_modelspace, 1);
 
 }
 
