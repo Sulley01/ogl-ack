@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "immediate-car", "immediate-
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shaded-car", "shaded-car\shaded-car.vcxproj", "{7189E795-00DD-410B-8E35-BBF0B9D3122D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "showcase-car", "showcase-car\showcase-car.vcxproj", "{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{7189E795-00DD-410B-8E35-BBF0B9D3122D}.Release|x64.Build.0 = Release|x64
 		{7189E795-00DD-410B-8E35-BBF0B9D3122D}.Release|x86.ActiveCfg = Release|Win32
 		{7189E795-00DD-410B-8E35-BBF0B9D3122D}.Release|x86.Build.0 = Release|Win32
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Debug|x64.ActiveCfg = Debug|x64
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Debug|x64.Build.0 = Debug|x64
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Debug|x86.ActiveCfg = Debug|Win32
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Debug|x86.Build.0 = Debug|Win32
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Release|x64.ActiveCfg = Release|x64
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Release|x64.Build.0 = Release|x64
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Release|x86.ActiveCfg = Release|Win32
+		{CDD90830-5E2D-46F4-8BDA-1A5E82E6A440}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
