@@ -66,9 +66,32 @@ int main(void)
 	// Vertexes data
 	GLfloat half_car_width = 0.3f;
 	GLfloat front_window_vertexes[] = {
-		-0.85f, 0.2f, half_car_width + 0.05f,
-		-0.8f, 0.2f, half_car_width + 0.05f,
-		-0.8f, 0.50f, half_car_width + 0.05f
+		-0.85f, 0.2f, half_car_width + 0.01f,
+		-0.75f, 0.2f, half_car_width + 0.01f,
+		-0.75f, 0.55f, half_car_width + 0.01f,
+		0.2f, 0.55f, half_car_width,
+		0.2f, 0.2f, half_car_width,
+		0.4f, 0.2f, half_car_width,
+		-0.7f, 0.55f, half_car_width,
+		0.15f, 0.55f, half_car_width,
+		0.15f, 0.2f, half_car_width,
+		-0.7f, 0.2f, half_car_width,
+		// Belakang
+		-0.85f, 0.2f, 0 - half_car_width,
+		-0.75f, 0.2f, 0 - half_car_width,
+		-0.75f, 0.55f, 0 - half_car_width,
+		0.2f, 0.55f, 0 - half_car_width,
+		0.2f, 0.2f, 0 - half_car_width,
+		0.4f, 0.2f, 0 - half_car_width,
+		-0.7f, 0.55f, 0 - half_car_width,
+		0.15f, 0.55f, 0 - half_car_width,
+		0.15f, 0.2f, 0 - half_car_width,
+		-0.7f, 0.2f, 0 - half_car_width,
+		// Kaca Depan
+		0.3f, 0.5f, 0.25f,
+		0.3f, 0.5f, -0.25f,
+		0.7f, 0.2f, -0.25f,
+		0.7f, 0.2f, 0.25f 
 	};
 	GLfloat car_vertexes[] = {
 		// Z+
@@ -255,7 +278,16 @@ int main(void)
 		15 + one_wheel_size, 8 + one_wheel_size, 0 + one_wheel_size
 	};
 	GLuint backWindowElements[] = {
-		0,1,2
+		0,1,2,
+		3,4,5,
+		6,7,8,
+		6,8,9,
+		10,11,12,
+		13,14,15,
+		16,17,18,
+		16,18,19,
+		20,21,22,
+		20,22,23
 	};
 	GLuint frontwheel_elements[] = {
 		// Z+ out
