@@ -60,6 +60,8 @@ int main(void)
 	// Background
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+	glEnable(GL_DEPTH_TEST);
+
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
@@ -89,26 +91,26 @@ int main(void)
 		0.15f, 0.2f, half_car_width + 0.01f,
 		-0.7f, 0.2f, half_car_width + 0.01f,
 		// Belakang
-		-0.85f, 0.2f, 0 - half_car_width,
-		-0.75f, 0.2f, 0 - half_car_width,
-		-0.75f, 0.55f, 0 - half_car_width,
-		0.2f, 0.55f, 0 - half_car_width,
-		0.2f, 0.2f, 0 - half_car_width,
-		0.4f, 0.2f, 0 - half_car_width,
-		-0.7f, 0.55f, 0 - half_car_width,
-		0.15f, 0.55f, 0 - half_car_width,
-		0.15f, 0.2f, 0 - half_car_width,
-		-0.7f, 0.2f, 0 - half_car_width,
+		-0.85f, 0.2f, 0 - half_car_width - 0.01f,
+		-0.75f, 0.2f, 0 - half_car_width - 0.01f,
+		-0.75f, 0.55f, 0 - half_car_width - 0.01f,
+		0.2f, 0.55f, 0 - half_car_width - 0.01f,
+		0.2f, 0.2f, 0 - half_car_width - 0.01f,
+		0.4f, 0.2f, 0 - half_car_width - 0.01f,
+		-0.7f, 0.55f, 0 - half_car_width - 0.01f,
+		0.15f, 0.55f, 0 - half_car_width - 0.01f,
+		0.15f, 0.2f, 0 - half_car_width - 0.01f,
+		-0.7f, 0.2f, 0 - half_car_width - 0.01f,
 		// Kaca Depan
-		0.3f, 0.5f, 0.25f,
-		0.3f, 0.5f, -0.25f,
-		0.7f, 0.2f, -0.25f,
-		0.7f, 0.2f, 0.25f,
+		0.275f, 0.55f, 0.25f,
+		0.275f, 0.55f, -0.25f,
+		0.775f, 0.2f, -0.25f,
+		0.775f, 0.2f, 0.25f,
 		// Kaca Belakang
-		-0.8f, 0.55f, 0.25f,
-		-0.9f, 0.2f, 0.25f,
-		-0.9f, 0.2f, -0.25f,
-		-0.8f, 0.55f, -0.25f
+		-0.815f, 0.55f, 0.25f,
+		-0.91f, 0.2f, 0.25f,
+		-0.91f, 0.2f, -0.25f,
+		-0.815f, 0.55f, -0.25f
 	};
 	GLfloat car_vertexes[] = {
 		// Z+
@@ -129,79 +131,79 @@ int main(void)
 	GLfloat half_wheel_width = 0.1f;
 	GLfloat backwheel_vertexes[] = {
 		// Z+ out
-		-0.6f, -0.2f, half_car_width,
-		-0.45f, -0.25f, half_car_width,
-		-0.4f, -0.4f, half_car_width,
-		-0.45f, -0.55f, half_car_width,
-		-0.6f, -0.6f, half_car_width,
-		-0.75f, -0.55f, half_car_width,
-		-0.8f, -0.4f, half_car_width,
-		-0.75f, -0.25f, half_car_width,
+		-0.6f, -0.2f, half_car_width + 0.05f,
+		-0.45f, -0.25f, half_car_width + 0.05f,
+		-0.4f, -0.4f, half_car_width + 0.05f,
+		-0.45f, -0.55f, half_car_width + 0.05f,
+		-0.6f, -0.6f, half_car_width + 0.05f,
+		-0.75f, -0.55f, half_car_width + 0.05f,
+		-0.8f, -0.4f, half_car_width + 0.05f,
+		-0.75f, -0.25f, half_car_width + 0.05f,
 		// Z+ in
-		-0.6f, -0.2f, half_car_width - half_wheel_width,
-		-0.45f, -0.25f, half_car_width - half_wheel_width,
-		-0.4f, -0.4f, half_car_width - half_wheel_width,
-		-0.45f, -0.55f, half_car_width - half_wheel_width,
-		-0.6f, -0.6f, half_car_width - half_wheel_width,
-		-0.75f, -0.55f, half_car_width - half_wheel_width,
-		-0.8f, -0.4f, half_car_width - half_wheel_width,
-		-0.75f, -0.25f, half_car_width - half_wheel_width,
+		-0.6f, -0.2f, half_car_width - half_wheel_width + 0.05f,
+		-0.45f, -0.25f, half_car_width - half_wheel_width + 0.05f,
+		-0.4f, -0.4f, half_car_width - half_wheel_width + 0.05f,
+		-0.45f, -0.55f, half_car_width - half_wheel_width + 0.05f,
+		-0.6f, -0.6f, half_car_width - half_wheel_width + 0.05f,
+		-0.75f, -0.55f, half_car_width - half_wheel_width + 0.05f,
+		-0.8f, -0.4f, half_car_width - half_wheel_width + 0.05f,
+		-0.75f, -0.25f, half_car_width - half_wheel_width + 0.05f,
 		// Z- out
-		-0.6f, -0.2f, 0 - half_car_width,
-		-0.45f, -0.25f, 0 - half_car_width,
-		-0.4f, -0.4f, 0 - half_car_width,
-		-0.45f, -0.55f, 0 - half_car_width,
-		-0.6f, -0.6f, 0 - half_car_width,
-		-0.75f, -0.55f, 0 - half_car_width,
-		-0.8f, -0.4f, 0 - half_car_width,
-		-0.75f, -0.25f, 0 - half_car_width,
+		-0.6f, -0.2f, 0 - half_car_width - 0.05f,
+		-0.45f, -0.25f, 0 - half_car_width - 0.05f,
+		-0.4f, -0.4f, 0 - half_car_width - 0.05f,
+		-0.45f, -0.55f, 0 - half_car_width - 0.05f,
+		-0.6f, -0.6f, 0 - half_car_width - 0.05f,
+		-0.75f, -0.55f, 0 - half_car_width - 0.05f,
+		-0.8f, -0.4f, 0 - half_car_width - 0.05f,
+		-0.75f, -0.25f, 0 - half_car_width - 0.05f,
 		// Z- in
-		-0.6f, -0.2f, 0 - half_car_width + half_wheel_width,
-		-0.45f, -0.25f, 0 - half_car_width + half_wheel_width,
-		-0.4f, -0.4f, 0 - half_car_width + half_wheel_width,
-		-0.45f, -0.55f, 0 - half_car_width + half_wheel_width,
-		-0.6f, -0.6f, 0 - half_car_width + half_wheel_width,
-		-0.75f, -0.55f, 0 - half_car_width + half_wheel_width,
-		-0.8f, -0.4f, 0 - half_car_width + half_wheel_width,
-		-0.75f, -0.25f, 0 - half_car_width + half_wheel_width
+		-0.6f, -0.2f, 0 - half_car_width + half_wheel_width - 0.05f,
+		-0.45f, -0.25f, 0 - half_car_width + half_wheel_width - 0.05f,
+		-0.4f, -0.4f, 0 - half_car_width + half_wheel_width - 0.05f,
+		-0.45f, -0.55f, 0 - half_car_width + half_wheel_width - 0.05f,
+		-0.6f, -0.6f, 0 - half_car_width + half_wheel_width - 0.05f,
+		-0.75f, -0.55f, 0 - half_car_width + half_wheel_width - 0.05f,
+		-0.8f, -0.4f, 0 - half_car_width + half_wheel_width - 0.05f,
+		-0.75f, -0.25f, 0 - half_car_width + half_wheel_width - 0.05f
 	};
 	GLfloat frontwheel_vertexes[] = {
 		// Z+ out
-		0.6f, -0.2f, half_car_width,
-		0.45f, -0.25f, half_car_width,
-		0.4f, -0.4f, half_car_width,
-		0.45f, -0.55f, half_car_width,
-		0.6f, -0.6f, half_car_width,
-		0.75f, -0.55f, half_car_width,
-		0.8f, -0.4f, half_car_width,
-		0.75f, -0.25f, half_car_width,
+		0.6f, -0.2f, half_car_width + 0.05f,
+		0.45f, -0.25f, half_car_width + 0.05f,
+		0.4f, -0.4f, half_car_width + 0.05f,
+		0.45f, -0.55f, half_car_width + 0.05f,
+		0.6f, -0.6f, half_car_width + 0.05f,
+		0.75f, -0.55f, half_car_width + 0.05f,
+		0.8f, -0.4f, half_car_width + 0.05f,
+		0.75f, -0.25f, half_car_width + 0.05f,
 		// Z+ in
-		0.6f, -0.2f, half_car_width - half_wheel_width,
-		0.45f, -0.25f, half_car_width - half_wheel_width,
-		0.4f, -0.4f, half_car_width - half_wheel_width,
-		0.45f, -0.55f, half_car_width - half_wheel_width,
-		0.6f, -0.6f, half_car_width - half_wheel_width,
-		0.75f, -0.55f, half_car_width - half_wheel_width,
-		0.8f, -0.4f, half_car_width - half_wheel_width,
-		0.75f, -0.25f, half_car_width - half_wheel_width,
+		0.6f, -0.2f, half_car_width - half_wheel_width + 0.05f,
+		0.45f, -0.25f, half_car_width - half_wheel_width + 0.05f,
+		0.4f, -0.4f, half_car_width - half_wheel_width + 0.05f,
+		0.45f, -0.55f, half_car_width - half_wheel_width + 0.05f,
+		0.6f, -0.6f, half_car_width - half_wheel_width + 0.05f,
+		0.75f, -0.55f, half_car_width - half_wheel_width + 0.05f,
+		0.8f, -0.4f, half_car_width - half_wheel_width + 0.05f,
+		0.75f, -0.25f, half_car_width - half_wheel_width + 0.05f,
 		// Z- out
-		0.6f, -0.2f, 0 - half_car_width,
-		0.45f, -0.25f, 0 - half_car_width,
-		0.4f, -0.4f, 0 - half_car_width,
-		0.45f, -0.55f, 0 - half_car_width,
-		0.6f, -0.6f, 0 - half_car_width,
-		0.75f, -0.55f, 0 - half_car_width,
-		0.8f, -0.4f, 0 - half_car_width,
-		0.75f, -0.25f, 0 - half_car_width,
+		0.6f, -0.2f, 0 - half_car_width - 0.05f,
+		0.45f, -0.25f, 0 - half_car_width - 0.05f,
+		0.4f, -0.4f, 0 - half_car_width - 0.05f,
+		0.45f, -0.55f, 0 - half_car_width - 0.05f,
+		0.6f, -0.6f, 0 - half_car_width - 0.05f,
+		0.75f, -0.55f, 0 - half_car_width - 0.05f,
+		0.8f, -0.4f, 0 - half_car_width - 0.05f,
+		0.75f, -0.25f, 0 - half_car_width - 0.05f,
 		// Z- in
-		0.6f, -0.2f, 0 - half_car_width + half_wheel_width,
-		0.45f, -0.25f, 0 - half_car_width + half_wheel_width,
-		0.4f, -0.4f, 0 - half_car_width + half_wheel_width,
-		0.45f, -0.55f, 0 - half_car_width + half_wheel_width,
-		0.6f, -0.6f, 0 - half_car_width + half_wheel_width,
-		0.75f, -0.55f, 0 - half_car_width + half_wheel_width,
-		0.8f, -0.4f, 0 - half_car_width + half_wheel_width,
-		0.75f, -0.25f, 0 - half_car_width + half_wheel_width
+		0.6f, -0.2f, 0 - half_car_width + half_wheel_width - 0.05f,
+		0.45f, -0.25f, 0 - half_car_width + half_wheel_width - 0.05f,
+		0.4f, -0.4f, 0 - half_car_width + half_wheel_width - 0.05f,
+		0.45f, -0.55f, 0 - half_car_width + half_wheel_width - 0.05f,
+		0.6f, -0.6f, 0 - half_car_width + half_wheel_width - 0.05f,
+		0.75f, -0.55f, 0 - half_car_width + half_wheel_width - 0.05f,
+		0.8f, -0.4f, 0 - half_car_width + half_wheel_width - 0.05f,
+		0.75f, -0.25f, 0 - half_car_width + half_wheel_width - 0.05f
 	};
 	
 	GLuint car_elements[] = {
@@ -488,7 +490,7 @@ int main(void)
 
 	do {
 		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Compute the MVP matrix from keyboard and mouse input
 		computeMatricesFromInputs();
