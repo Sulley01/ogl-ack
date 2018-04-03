@@ -91,7 +91,12 @@ int main(void)
 		0.3f, 0.5f, 0.25f,
 		0.3f, 0.5f, -0.25f,
 		0.7f, 0.2f, -0.25f,
-		0.7f, 0.2f, 0.25f 
+		0.7f, 0.2f, 0.25f,
+		// Kaca Belakang
+		-0.8f, 0.55f, 0.25f,
+		-0.9f, 0.2f, 0.25f,
+		-0.9f, 0.2f, -0.25f,
+		-0.8f, 0.55f, -0.25f
 	};
 	GLfloat car_vertexes[] = {
 		// Z+
@@ -278,16 +283,26 @@ int main(void)
 		15 + one_wheel_size, 8 + one_wheel_size, 0 + one_wheel_size
 	};
 	GLuint backWindowElements[] = {
+		// Kaca Depan Bagian Belakang
 		0,1,2,
+		// Kaca Depan Bagian Depan
 		3,4,5,
+		// Kaca Depan Tengah
 		6,7,8,
 		6,8,9,
+		// Kaca Belakang Bagian Belakang
 		10,11,12,
+		// Kaca Belakang Bagian Depan
 		13,14,15,
+		// Kaca Belakang Bagian Tengah
 		16,17,18,
 		16,18,19,
+		// Kaca Depan
 		20,21,22,
-		20,22,23
+		20,22,23,
+		// Kaca Belakang
+		24,25,26,
+		24,26,27
 	};
 	GLuint frontwheel_elements[] = {
 		// Z+ out
