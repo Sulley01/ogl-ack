@@ -65,17 +65,29 @@ int main(void)
 
 	// Vertexes data
 	GLfloat half_car_width = 0.3f;
-	GLfloat front_window_vertexes[] = {
-		-0.85f, 0.2f, half_car_width + 0.01f,
-		-0.75f, 0.2f, half_car_width + 0.01f,
-		-0.75f, 0.55f, half_car_width + 0.01f,
+	GLfloat window_grey[]{
+		-0.85f, 0.2f, half_car_width,
+		-0.75f, 0.2f, half_car_width,
+		-0.75f, 0.55f, half_car_width,
 		0.2f, 0.55f, half_car_width,
 		0.2f, 0.2f, half_car_width,
 		0.4f, 0.2f, half_car_width,
 		-0.7f, 0.55f, half_car_width,
 		0.15f, 0.55f, half_car_width,
 		0.15f, 0.2f, half_car_width,
-		-0.7f, 0.2f, half_car_width,
+		-0.7f, 0.2f, half_car_width
+	};
+	GLfloat front_window_vertexes[] = {
+		-0.85f, 0.2f, half_car_width + 0.01f,
+		-0.75f, 0.2f, half_car_width + 0.01f,
+		-0.75f, 0.55f, half_car_width + 0.01f,
+		0.2f, 0.55f, half_car_width + 0.01f,
+		0.2f, 0.2f, half_car_width + 0.01f,
+		0.4f, 0.2f, half_car_width + 0.01f,
+		-0.7f, 0.55f, half_car_width + 0.01f,
+		0.15f, 0.55f, half_car_width + 0.01f,
+		0.15f, 0.2f, half_car_width + 0.01f,
+		-0.7f, 0.2f, half_car_width + 0.01f,
 		// Belakang
 		-0.85f, 0.2f, 0 - half_car_width,
 		-0.75f, 0.2f, 0 - half_car_width,
@@ -282,6 +294,15 @@ int main(void)
 		14 + one_wheel_size, 15 + one_wheel_size, 7 + one_wheel_size,
 		15 + one_wheel_size, 8 + one_wheel_size, 0 + one_wheel_size
 	};
+	GLuint greyWindowElements[] = {
+		// Kaca Depan Bagian Belakang
+		0,1,2,
+		// Kaca Depan Bagian Depan
+		3,4,5,
+		// Kaca Depan Tengah
+		6,7,8,
+		6,8,9,
+	};
 	GLuint backWindowElements[] = {
 		// Kaca Depan Bagian Belakang
 		0,1,2,
@@ -400,6 +421,21 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, jendelaBelakangEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(backWindowElements), backWindowElements, GL_STATIC_DRAW);
 
+	//Test Window Grey
+	GLuint jendelaBelakangGreyVAO;
+	glGenVertexArrays(1, &jendelaBelakangGreyVAO);
+	glBindVertexArray(jendelaBelakangGreyVAO);
+
+	GLuint jendelaBelakangGreyVBO;
+	glGenBuffers(1, &jendelaBelakangGreyVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, jendelaBelakangGreyVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(window_grey), window_grey, GL_STATIC_DRAW);
+
+	GLuint jendelaBelakangGreyEBO;
+	glGenBuffers(1, &jendelaBelakangGreyEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, jendelaBelakangGreyEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(greyWindowElements), greyWindowElements, GL_STATIC_DRAW);
+
 	// Object 2
 	// Create Vertex Array Object
 	GLuint BackwheelVAO;
@@ -437,6 +473,7 @@ int main(void)
 	GLuint BackwheelProgram = LoadShaders("BackWheelVertexShader.vertexshader", "WheelFragmentShader.fragmentshader");
 	GLuint FrontwheelProgram = LoadShaders("FrontWheelVertexShader.vertexshader", "WheelFragmentShader.fragmentshader");
 	GLuint FrontWindowProgram = LoadShaders("FrontWindowVertexShader.vertexshader", "WindowFragmentShader.fragmentshader");
+	GLuint GreyWindowProgram = LoadShaders("GreyWindowVertexShader.vertexshader", "GreyWindowFragmentShader.fragmentshader");
 	// Get a handle for our "MVP" uniform
 	GLuint CarCameraMatrix = glGetUniformLocation(CarProgram, "CarCameraMVP");
 	GLuint BackwheelRotationMatrix = glGetUniformLocation(BackwheelProgram, "BackwheelRotationMVP");
@@ -444,6 +481,7 @@ int main(void)
 	GLuint FrontwheelRotationMatrix = glGetUniformLocation(FrontwheelProgram, "FrontwheelRotationMVP");
 	GLuint FrontwheelCameraMatrix = glGetUniformLocation(FrontwheelProgram, "FrontwheelCameraMVP");
 	GLuint FrontWindowCameraMatrix = glGetUniformLocation(FrontWindowProgram, "FrontWindowCameraMVP");
+	GLuint GreyWindowCameraMatrix = glGetUniformLocation(GreyWindowProgram, "GreyWindowCameraMVP");
 
 	// Variables
 	float angle = 0;
@@ -514,6 +552,24 @@ int main(void)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BackwheelEBO);
 		glDrawElements(GL_TRIANGLES, sizeof(backwheel_elements), GL_UNSIGNED_INT, 0);
 
+		//Test gambar window grey
+		glUseProgram(GreyWindowProgram);
+		glUniformMatrix4fv(GreyWindowCameraMatrix, 1, GL_FALSE, &CameraMVP[0][0]);
+		glBindVertexArray(jendelaBelakangGreyVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, jendelaBelakangGreyVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(window_grey), window_grey, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(
+			3,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, jendelaBelakangGreyEBO);
+		glDrawElements(GL_TRIANGLES, sizeof(greyWindowElements), GL_UNSIGNED_INT, 0);
+
 		//Test gambar window
 		glUseProgram(FrontWindowProgram);
 		glUniformMatrix4fv(FrontWindowCameraMatrix, 1, GL_FALSE, &CameraMVP[0][0]);
@@ -531,6 +587,8 @@ int main(void)
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, jendelaBelakangEBO);
 		glDrawElements(GL_TRIANGLES, sizeof(backWindowElements), GL_UNSIGNED_INT, 0);
+
+
 
 
 		// Use our shader
@@ -554,7 +612,6 @@ int main(void)
 		);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FrontwheelEBO);
 		glDrawElements(GL_TRIANGLES, sizeof(frontwheel_elements), GL_UNSIGNED_INT, 0);
-
 
 		glDisableVertexAttribArray(0);
 
