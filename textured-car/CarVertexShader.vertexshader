@@ -1,0 +1,17 @@
+#version 330 core
+
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 4) in vec2 vertexTexture;
+uniform mat4 CarCameraMVP;
+
+// Output data ; will be interpolated for each fragment.
+out vec2 carUV;
+
+void main(){
+
+    gl_Position = CarCameraMVP * vec4(vertexPosition_modelspace, 1);
+    carUV = vertexTexture;
+
+}
+
