@@ -393,12 +393,19 @@ int main(void)
 		15 + one_wheel_size, 8 + one_wheel_size, 0 + one_wheel_size
 	};
 	GLfloat car_uv[] = {
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 1.0f,
-		1.0f, 0.0f,
-		0.0f, 0.0f
+		0.1f, 0.1f,
+		0.1f, 0.58f,
+		0.157f, 0.9f,
+		0.443f, 0.9f,
+		0.9f, 0.5f,
+		0.9f, 0.1f,
+
+		0.1f, 0.1f,
+		0.1f, 0.58f,
+		0.157f, 0.9f,
+		0.443f, 0.9f,
+		0.9f, 0.5f,
+		0.9f, 0.1f
 	};
 
 	// Object 1
