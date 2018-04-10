@@ -506,7 +506,7 @@ int main(void)
 	GLuint GreyWindowCameraMatrix = glGetUniformLocation(GreyWindowProgram, "GreyWindowCameraMVP");
 
 	// Load the texture using any two methods
-	GLuint Texture = loadBMP_custom("car.bmp");
+	GLuint Texture = loadBMP_custom("car2.bmp");
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID = glGetUniformLocation(CarProgram, "carTextureSampler");
 
