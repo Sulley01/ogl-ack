@@ -206,7 +206,18 @@ int main(void)
 		0.8f, -0.4f, 0 - half_car_width + half_wheel_width - 0.05f,
 		0.75f, -0.25f, 0 - half_car_width + half_wheel_width - 0.05f
 	};
+	GLfloat sun_dimension = 0.5f;
+	GLfloat sun_vertexes[] = {
+		-1 * sun_dimension, -1 * sun_dimension, sun_dimension,
+		-1 * sun_dimension, sun_dimension, sun_dimension,
+		sun_dimension, sun_dimension, sun_dimension,
+		sun_dimension, -1 * sun_dimension, sun_dimension,
 
+		-1 * sun_dimension, -1 * sun_dimension, -1 * sun_dimension,
+		-1 * sun_dimension, sun_dimension, -1 * sun_dimension,
+		sun_dimension, sun_dimension, -1 * sun_dimension,
+		sun_dimension, -1 * sun_dimension, -1 * sun_dimension,
+	};
 	GLuint car_elements[] = {
 		// Z+
 		0, 1, 2,
@@ -230,7 +241,7 @@ int main(void)
 		8, 9, 3,
 		9, 10, 4,
 		10, 11, 5,
-		11, 6, 0,
+		11, 6, 0
 	};
 	GLuint one_wheel_size = 16;
 	GLuint backwheel_elements[] = {
@@ -304,7 +315,7 @@ int main(void)
 		3,4,5,
 		// Kaca Depan Tengah
 		6,7,8,
-		6,8,9,
+		6,8,9
 	};
 	GLuint backWindowElements[] = {
 		// Kaca Depan Bagian Belakang
@@ -392,6 +403,23 @@ int main(void)
 		14 + one_wheel_size, 15 + one_wheel_size, 7 + one_wheel_size,
 		15 + one_wheel_size, 8 + one_wheel_size, 0 + one_wheel_size
 	};
+	GLuint sun_elements[] = {
+		0, 1, 2,
+		0, 2, 3,
+
+		4, 5, 6,
+		4, 6, 7,
+
+		0, 1, 4,
+		1, 2, 5,
+		2, 3, 6,
+		3, 4, 7,
+
+		4, 5, 1,
+		5, 6, 2,
+		6, 7, 3,
+		7, 4, 0
+	};
 	GLfloat car_uv[] = {
 		0.1f, 0.1f,
 		0.1f, 0.58f,
@@ -408,19 +436,19 @@ int main(void)
 		0.9f, 0.1f
 	};
 	GLfloat car_n[] = {
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
 
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
 	};
 
 	/* CAR */
@@ -509,12 +537,29 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FrontwheelEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(frontwheel_elements), frontwheel_elements, GL_STATIC_DRAW);
 
+	/* SUN */
+	// Create Vertex Array Object
+	GLuint SunVAO;
+	glGenVertexArrays(1, &SunVAO);
+	glBindVertexArray(SunVAO);
+	// Create a Vertex Buffer Object and copy the vertex data to it
+	GLuint SunVBO;
+	glGenBuffers(1, &SunVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, SunVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(sun_vertexes), sun_vertexes, GL_STATIC_DRAW);
+	// Create an element array
+	GLuint SunEBO;
+	glGenBuffers(1, &SunEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SunEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sun_elements), sun_elements, GL_STATIC_DRAW);
+
 	// Create and compile our GLSL program from the shaders
 	GLuint CarProgram = LoadShaders("CarVertexShader.vertexshader", "CarFragmentShader.fragmentshader");
 	GLuint BackwheelProgram = LoadShaders("BackWheelVertexShader.vertexshader", "WheelFragmentShader.fragmentshader");
 	GLuint FrontwheelProgram = LoadShaders("FrontWheelVertexShader.vertexshader", "WheelFragmentShader.fragmentshader");
 	GLuint FrontWindowProgram = LoadShaders("FrontWindowVertexShader.vertexshader", "WindowFragmentShader.fragmentshader");
 	GLuint GreyWindowProgram = LoadShaders("GreyWindowVertexShader.vertexshader", "GreyWindowFragmentShader.fragmentshader");
+	GLuint SunProgram = LoadShaders("SunVertexShader.vertexshader", "SunFragmentShader.fragmentshader");
 	// Get a handle for our "MVP" uniform
 	GLuint CarCameraMatrix = glGetUniformLocation(CarProgram, "CarCameraMVP");
 	GLuint CarViewMatrix = glGetUniformLocation(CarProgram, "CarCameraV");
@@ -525,6 +570,8 @@ int main(void)
 	GLuint FrontwheelCameraMatrix = glGetUniformLocation(FrontwheelProgram, "FrontwheelCameraMVP");
 	GLuint FrontWindowCameraMatrix = glGetUniformLocation(FrontWindowProgram, "FrontWindowCameraMVP");
 	GLuint GreyWindowCameraMatrix = glGetUniformLocation(GreyWindowProgram, "GreyWindowCameraMVP");
+	GLuint SunTranslationMatrix = glGetUniformLocation(SunProgram, "SunTranslationMVP");
+	GLuint SunCameraMatrix = glGetUniformLocation(SunProgram, "SunCameraMVP");
 
 	// Load the texture using any two methods
 	GLuint Texture = loadBMP_custom("car.bmp");
@@ -564,6 +611,9 @@ int main(void)
 		glm::vec3 lightPos = glm::vec3(4, 4, 4);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
+		// MVP sun
+		glm::mat4 SunMVP = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 4.0f, 4.0f));
+
 		/* CAR */
 		// Use our shader
 		glUseProgram(CarProgram);
@@ -590,7 +640,6 @@ int main(void)
 			0,                  // stride
 			(void*)0            // array buffer offset
 		);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CarEBO);
 		// Texture object
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, CarUV);
@@ -613,6 +662,7 @@ int main(void)
 			0,                                // stride
 			(void*)0                          // array buffer offset
 		);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CarEBO);
 		glDrawElements(GL_TRIANGLES, sizeof(car_elements), GL_UNSIGNED_INT, 0);
 
 		/* BACK WHEEL */
@@ -697,6 +747,29 @@ int main(void)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FrontwheelEBO);
 		glDrawElements(GL_TRIANGLES, sizeof(frontwheel_elements), GL_UNSIGNED_INT, 0);
 
+		/* SUN */
+		// Use our shader
+		glUseProgram(SunProgram);
+		// Send our transformation to the currently bound shader, 
+		// in the "MVP" uniform
+		glUniformMatrix4fv(SunTranslationMatrix, 1, GL_FALSE, &SunMVP[0][0]);
+		glUniformMatrix4fv(SunCameraMatrix, 1, GL_FALSE, &CameraMVP[0][0]);
+		// Draw object
+		glBindVertexArray(SunVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, SunVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(sun_vertexes), sun_vertexes, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SunEBO);
+		glDrawElements(GL_TRIANGLES, sizeof(sun_elements), GL_UNSIGNED_INT, 0);
+
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
@@ -724,6 +797,7 @@ int main(void)
 	glDeleteBuffers(1, &FrontwheelEBO);
 	glDeleteBuffers(1, &jendelaBelakangEBO);
 	glDeleteBuffers(1, &jendelaBelakangGreyEBO);
+	glDeleteBuffers(1, &SunEBO);
 	glDeleteBuffers(1, &CarVBO);
 	glDeleteBuffers(1, &CarUV);
 	glDeleteBuffers(1, &CarN);
@@ -731,17 +805,20 @@ int main(void)
 	glDeleteBuffers(1, &FrontwheelVBO);
 	glDeleteBuffers(1, &jendelaBelakangVBO);
 	glDeleteBuffers(1, &jendelaBelakangGreyVBO);
+	glDeleteBuffers(1, &SunVBO);
 	glDeleteProgram(CarProgram);
 	glDeleteProgram(BackwheelProgram);
 	glDeleteProgram(FrontwheelProgram);
 	glDeleteProgram(FrontWindowProgram);
 	glDeleteProgram(GreyWindowProgram);
+	glDeleteProgram(SunProgram);
 	glDeleteTextures(1, &Texture);
 	glDeleteVertexArrays(1, &CarVAO);
 	glDeleteVertexArrays(1, &BackwheelVAO);
 	glDeleteVertexArrays(1, &FrontwheelVAO);
 	glDeleteVertexArrays(1, &jendelaBelakangVAO);
 	glDeleteVertexArrays(1, &jendelaBelakangGreyVAO);
+	glDeleteVertexArrays(1, &SunVAO);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
