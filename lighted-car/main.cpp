@@ -407,6 +407,21 @@ int main(void)
 		0.9f, 0.5f,
 		0.9f, 0.1f
 	};
+	GLfloat car_n[] = {
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f
+	};
 
 	/* CAR */
 	// Create Vertex Array Object
@@ -422,6 +437,10 @@ int main(void)
 	glGenBuffers(1, &CarUV);
 	glBindBuffer(GL_ARRAY_BUFFER, CarUV);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(car_uv), car_uv, GL_STATIC_DRAW);
+	GLuint CarN;
+	glGenBuffers(1, &CarN);
+	glBindBuffer(GL_ARRAY_BUFFER, CarN);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(car_n), car_n, GL_STATIC_DRAW);
 	// Create an element array
 	GLuint CarEBO;
 	glGenBuffers(1, &CarEBO);
@@ -498,6 +517,8 @@ int main(void)
 	GLuint GreyWindowProgram = LoadShaders("GreyWindowVertexShader.vertexshader", "GreyWindowFragmentShader.fragmentshader");
 	// Get a handle for our "MVP" uniform
 	GLuint CarCameraMatrix = glGetUniformLocation(CarProgram, "CarCameraMVP");
+	GLuint CarViewMatrix = glGetUniformLocation(CarProgram, "CarCameraV");
+	GLuint CarModelMatrix = glGetUniformLocation(CarProgram, "CarCameraM");
 	GLuint BackwheelRotationMatrix = glGetUniformLocation(BackwheelProgram, "BackwheelRotationMVP");
 	GLuint BackwheelCameraMatrix = glGetUniformLocation(BackwheelProgram, "BackwheelCameraMVP");
 	GLuint FrontwheelRotationMatrix = glGetUniformLocation(FrontwheelProgram, "FrontwheelRotationMVP");
@@ -509,6 +530,9 @@ int main(void)
 	GLuint Texture = loadBMP_custom("car.bmp");
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID = glGetUniformLocation(CarProgram, "carTextureSampler");
+
+	// Get a handle for our "LightPosition" uniform
+	GLuint LightID = glGetUniformLocation(CarProgram, "LightPosition_worldspace");
 
 	// Variables
 	float angle = 0;
@@ -536,12 +560,18 @@ int main(void)
 		glm::mat4 FrontwheelAddTranslation = glm::translate(glm::mat4(1.0f), glm::vec3(0.6f, -0.4f, 0.0f));
 		glm::mat4 FrontwheelMVP = FrontwheelAddTranslation * FrontwheelRotation * FrontwheelSubTranslation;
 
+		// Light
+		glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+
 		/* CAR */
 		// Use our shader
 		glUseProgram(CarProgram);
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
 		glUniformMatrix4fv(CarCameraMatrix, 1, GL_FALSE, &CameraMVP[0][0]);
+		glUniformMatrix4fv(CarViewMatrix, 1, GL_FALSE, &CameraView[0][0]);
+		glUniformMatrix4fv(CarModelMatrix, 1, GL_FALSE, &CameraModel[0][0]);
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Texture);
@@ -571,6 +601,17 @@ int main(void)
 			GL_FALSE,			// normalized?
 			0,					// stride
 			(void*)0			// array buffer offset
+		);
+		// Light object
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, CarN);
+		glVertexAttribPointer(
+			2,                                // attribute
+			3,                                // size
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
 		);
 		glDrawElements(GL_TRIANGLES, sizeof(car_elements), GL_UNSIGNED_INT, 0);
 
@@ -658,6 +699,7 @@ int main(void)
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -683,20 +725,23 @@ int main(void)
 	glDeleteBuffers(1, &jendelaBelakangEBO);
 	glDeleteBuffers(1, &jendelaBelakangGreyEBO);
 	glDeleteBuffers(1, &CarVBO);
+	glDeleteBuffers(1, &CarUV);
+	glDeleteBuffers(1, &CarN);
 	glDeleteBuffers(1, &BackwheelVBO);
 	glDeleteBuffers(1, &FrontwheelVBO);
 	glDeleteBuffers(1, &jendelaBelakangVBO);
 	glDeleteBuffers(1, &jendelaBelakangGreyVBO);
-	glDeleteVertexArrays(1, &CarVAO);
-	glDeleteVertexArrays(1, &BackwheelVAO);
-	glDeleteVertexArrays(1, &FrontwheelVAO);
-	glDeleteVertexArrays(1, &jendelaBelakangVAO);
-	glDeleteVertexArrays(1, &jendelaBelakangGreyVAO);
 	glDeleteProgram(CarProgram);
 	glDeleteProgram(BackwheelProgram);
 	glDeleteProgram(FrontwheelProgram);
 	glDeleteProgram(FrontWindowProgram);
 	glDeleteProgram(GreyWindowProgram);
+	glDeleteTextures(1, &Texture);
+	glDeleteVertexArrays(1, &CarVAO);
+	glDeleteVertexArrays(1, &BackwheelVAO);
+	glDeleteVertexArrays(1, &FrontwheelVAO);
+	glDeleteVertexArrays(1, &jendelaBelakangVAO);
+	glDeleteVertexArrays(1, &jendelaBelakangGreyVAO);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
