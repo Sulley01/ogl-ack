@@ -206,7 +206,7 @@ int main(void)
 		0.8f, -0.4f, 0 - half_car_width + half_wheel_width - 0.05f,
 		0.75f, -0.25f, 0 - half_car_width + half_wheel_width - 0.05f
 	};
-	GLfloat sun_dimension = 0.5f;
+	GLfloat sun_dimension = 0.1f;
 	GLfloat sun_vertexes[] = {
 		-1 * sun_dimension, -1 * sun_dimension, sun_dimension,
 		-1 * sun_dimension, sun_dimension, sun_dimension,
@@ -570,7 +570,7 @@ int main(void)
 	GLuint FrontwheelCameraMatrix = glGetUniformLocation(FrontwheelProgram, "FrontwheelCameraMVP");
 	GLuint FrontWindowCameraMatrix = glGetUniformLocation(FrontWindowProgram, "FrontWindowCameraMVP");
 	GLuint GreyWindowCameraMatrix = glGetUniformLocation(GreyWindowProgram, "GreyWindowCameraMVP");
-	GLuint SunTranslationMatrix = glGetUniformLocation(SunProgram, "SunTranslationMVP");
+	GLuint SunMatrix = glGetUniformLocation(SunProgram, "SunMVP");
 	GLuint SunCameraMatrix = glGetUniformLocation(SunProgram, "SunCameraMVP");
 
 	// Load the texture using any two methods
@@ -607,10 +607,17 @@ int main(void)
 		glm::mat4 FrontwheelMVP = FrontwheelAddTranslation * FrontwheelRotation * FrontwheelSubTranslation;
 
 		// Light
-		glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		GLint lightPosX = 2;
+		GLint lightPosY = 2;
+		GLint lightPosZ = 2;
+		glm::vec3 lightPos = glm::vec3(lightPosX, lightPosY, lightPosZ);
 
 		// MVP sun
-		glm::mat4 SunMVP = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 4.0f, 4.0f));
+		glm::mat4 SunRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle/10), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 SunMVP = SunRotation * glm::translate(glm::mat4(1.0f), lightPos);
+
+		// Update lightPos
+		lightPos = glm::vec3(SunMVP[0][0], SunMVP[1][1], SunMVP[2][2]);
 
 		/* CAR */
 		// Use our shader
@@ -751,7 +758,7 @@ int main(void)
 		glUseProgram(SunProgram);
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
-		glUniformMatrix4fv(SunTranslationMatrix, 1, GL_FALSE, &SunMVP[0][0]);
+		glUniformMatrix4fv(SunMatrix, 1, GL_FALSE, &SunMVP[0][0]);
 		glUniformMatrix4fv(SunCameraMatrix, 1, GL_FALSE, &CameraMVP[0][0]);
 		// Draw object
 		glBindVertexArray(SunVAO);
@@ -779,12 +786,6 @@ int main(void)
 
 		// Rotate
 		angle -= 1.0f;
-		// MVP backwheel
-		BackwheelRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
-		BackwheelMVP = BackwheelAddTranslation * BackwheelRotation * BackwheelSubTranslation;
-		// MVP frontwheel
-		FrontwheelRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
-		FrontwheelMVP = FrontwheelAddTranslation * FrontwheelRotation * FrontwheelSubTranslation;
 
 	} // Check if the ESC key was pressed or the window was closed
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
