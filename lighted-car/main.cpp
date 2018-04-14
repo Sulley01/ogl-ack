@@ -436,19 +436,19 @@ int main(void)
 		0.9f, 0.1f
 	};
 	GLfloat car_n[] = {
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, -1.0f,
+		-1 / sqrt(3), -1 / sqrt(3), 1 / sqrt(3),
+		-1 / sqrt(2), 0.0f, 1 / sqrt(2),
+		-1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3),
+		1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3),
+		1 / sqrt(2), 0.0f, 1 / sqrt(2),
+		1 / sqrt(3), -1 / sqrt(3), 1 / sqrt(3),
 
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
+		-1 / sqrt(3), -1 / sqrt(3), -1 / sqrt(3),
+		-1 / sqrt(2), 0.0f, -1 / sqrt(2),
+		-1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3),
+		1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3),
+		1 / sqrt(2), 0.0f, -1 / sqrt(2),
+		1 / sqrt(3), -1 / sqrt(3), -1 / sqrt(3)
 	};
 
 	/* CAR */
@@ -577,7 +577,6 @@ int main(void)
 	GLuint Texture = loadBMP_custom("car.bmp");
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID = glGetUniformLocation(CarProgram, "carTextureSampler");
-
 	// Get a handle for our "LightPosition" uniform
 	GLuint LightID = glGetUniformLocation(CarProgram, "LightPosition_worldspace");
 
@@ -609,7 +608,6 @@ int main(void)
 
 		// Light
 		glm::vec3 lightPos = glm::vec3(4, 4, 4);
-		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		// MVP sun
 		glm::mat4 SunMVP = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 4.0f, 4.0f));
@@ -622,6 +620,7 @@ int main(void)
 		glUniformMatrix4fv(CarCameraMatrix, 1, GL_FALSE, &CameraMVP[0][0]);
 		glUniformMatrix4fv(CarViewMatrix, 1, GL_FALSE, &CameraView[0][0]);
 		glUniformMatrix4fv(CarModelMatrix, 1, GL_FALSE, &CameraModel[0][0]);
+		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Texture);
