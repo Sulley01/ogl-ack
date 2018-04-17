@@ -437,17 +437,17 @@ int main(void)
 	};
 	GLfloat car_n[] = {
 		-1 / sqrt(3), -1 / sqrt(3), 1 / sqrt(3),
-		-1 / sqrt(2), 0.0f, 1 / sqrt(2),
-		-1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3),
-		1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3),
-		1 / sqrt(2), 0.0f, 1 / sqrt(2),
+		-0.88638, 0.109119, 0.449908,
+		0.611748, 0.477639, 0.630576,
+		0.270198, 0.843144, 0.464867,
+		0.308923, -0.6003, 0.737706,
 		1 / sqrt(3), -1 / sqrt(3), 1 / sqrt(3),
 
 		-1 / sqrt(3), -1 / sqrt(3), -1 / sqrt(3),
-		-1 / sqrt(2), 0.0f, -1 / sqrt(2),
-		-1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3),
-		1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3),
-		1 / sqrt(2), 0.0f, -1 / sqrt(2),
+		-0.88638, 0.109119, -0.449908,
+		0.611748, 0.477639, -0.630576,
+		0.270198, 0.843144, -0.464867,
+		0.308923, -0.6003, -0.737706,
 		1 / sqrt(3), -1 / sqrt(3), -1 / sqrt(3)
 	};
 
@@ -613,7 +613,7 @@ int main(void)
 		glm::vec3 lightPos = glm::vec3(lightPosX, lightPosY, lightPosZ);
 
 		// MVP sun
-		glm::mat4 SunRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle/10), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 SunRotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 SunMVP = SunRotation * glm::translate(glm::mat4(1.0f), lightPos);
 
 		// Update lightPos
