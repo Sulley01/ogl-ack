@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "textured-car", "textured-ca
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lighted-car", "lighted-car\lighted-car.vcxproj", "{41CA48F4-0022-4803-A3E2-0F90157C527E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "particled-car", "particled-car\particled-car.vcxproj", "{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{41CA48F4-0022-4803-A3E2-0F90157C527E}.Release|x64.Build.0 = Release|x64
 		{41CA48F4-0022-4803-A3E2-0F90157C527E}.Release|x86.ActiveCfg = Release|Win32
 		{41CA48F4-0022-4803-A3E2-0F90157C527E}.Release|x86.Build.0 = Release|Win32
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Debug|x64.ActiveCfg = Debug|x64
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Debug|x64.Build.0 = Debug|x64
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Debug|x86.ActiveCfg = Debug|Win32
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Debug|x86.Build.0 = Debug|Win32
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Release|x64.ActiveCfg = Release|x64
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Release|x64.Build.0 = Release|x64
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Release|x86.ActiveCfg = Release|Win32
+		{2F0A3A14-F47F-4A07-8CB6-1F812621ED06}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
