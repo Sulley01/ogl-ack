@@ -724,11 +724,26 @@ int main(void)
 	// Variables
 	float angle = 0;
 	double lastTime = glfwGetTime();
+	double lastTimeFPS = glfwGetTime();
+	int nbFrames = 0;
 
 	do {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_BLEND);
+
+		// Count time
+		double currentTime = glfwGetTime();
+		double delta = currentTime - lastTime;
+		lastTime = currentTime;
+
+		// FPS
+		nbFrames++;
+		if (currentTime - lastTimeFPS >= 1.0) {
+			printf("FPS : %f (%f ms/frame)\n", double(nbFrames), 1000.0 / double(nbFrames));
+			nbFrames = 0;
+			lastTimeFPS += 1.0;
+		}
 
 		// Compute the MVP matrix from keyboard and mouse input
 		computeMatricesFromInputs();
@@ -920,10 +935,6 @@ int main(void)
 		glDrawElements(GL_TRIANGLES, sizeof(sun_elements), GL_UNSIGNED_INT, 0);
 
 		/* SMOKE */
-		// Count time
-		double currentTime = glfwGetTime();
-		double delta = currentTime - lastTime;
-		lastTime = currentTime;
 		// Setup camera matrix
 		computeMatricesFromInputs();
 		glm::mat4 SmokeProjectionMatrix = getProjectionMatrix();
