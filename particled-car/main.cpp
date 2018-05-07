@@ -499,10 +499,10 @@ int main(void)
 		ParticlesContainer[i].cameradistance = -1.0f;
 	}
 	static const GLfloat smoke_vertexes[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f,  0.5f, 0.0f,
-		0.5f,  0.5f, 0.0f,
+		-0.1f, -0.1f, 0.0f,
+		0.1f, -0.1f, 0.0f,
+		-0.1f,  0.1f, 0.0f,
+		0.1f,  0.1f, 0.0f,
 	};
 
 	/* CAR */
@@ -666,6 +666,7 @@ int main(void)
 	do {
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glDisable(GL_BLEND);
 
 		// Compute the MVP matrix from keyboard and mouse input
 		computeMatricesFromInputs();
@@ -872,12 +873,12 @@ int main(void)
 		if (newparticles > (int)(0.016f*10000.0)) {
 			newparticles = (int)(0.016f*10000.0);
 		}
-		for (int i = 0; i<newparticles; i++) {
+		for (int i = 0; i < newparticles; i++) {
 			int particleIndex = FindUnusedParticle();
-			ParticlesContainer[particleIndex].life = 5.0f;
-			ParticlesContainer[particleIndex].pos = glm::vec3(0, 0, -20.0f);
+			ParticlesContainer[particleIndex].life = 0.2f;
+			ParticlesContainer[particleIndex].pos = glm::vec3(-0.9f, -0.4f, 0.0f);
 			float spread = 1.5f;
-			glm::vec3 maindir = glm::vec3(0.0f, 10.0f, 0.0f);
+			glm::vec3 maindir = glm::vec3(-10.0f, 0.0f, 0.0f);
 			// Random direction
 			glm::vec3 randomdir = glm::vec3(
 				(rand() % 2000 - 1000.0f) / 1000.0f,
