@@ -34,8 +34,10 @@ struct Particle {
 const int MaxParticles = 100000;
 Particle SmokeParticlesContainer[MaxParticles];
 Particle RainParticlesContainer[MaxParticles];
+Particle SplashParticlesContainer[MaxParticles];
 int LastUsedSmokeParticle = 0;
 int LastUsedRainParticle = 0;
+int LastUsedSplashParticle = 0;
 
 int FindUnusedSmokeParticle() {
 	for (int i = LastUsedSmokeParticle; i < MaxParticles; i++) {
@@ -73,12 +75,34 @@ int FindUnusedRainParticle() {
 	return 0;
 }
 
+int FindUnusedSplashParticle() {
+	for (int i = LastUsedSplashParticle; i < MaxParticles; i++) {
+		if (SplashParticlesContainer[i].life < 0) {
+			LastUsedSplashParticle = i;
+			return i;
+		}
+	}
+
+	for (int i = 0; i < LastUsedSplashParticle; i++) {
+		if (SplashParticlesContainer[i].life < 0) {
+			LastUsedSplashParticle = i;
+			return i;
+		}
+	}
+
+	return 0;
+}
+
 void SortSmokeParticles() {
 	std::sort(&SmokeParticlesContainer[0], &SmokeParticlesContainer[MaxParticles]);
 }
 
 void SortRainParticles() {
 	std::sort(&RainParticlesContainer[0], &RainParticlesContainer[MaxParticles]);
+}
+
+void SortSplashParticles() {
+	std::sort(&SplashParticlesContainer[0], &SplashParticlesContainer[MaxParticles]);
 }
 
 int main(void)
@@ -525,8 +549,8 @@ int main(void)
 	static const GLfloat smoke_vertexes[] = {
 		-0.1f, -0.1f, 0.0f,
 		0.1f, -0.1f, 0.0f,
-		-0.1f,  0.1f, 0.0f,
-		0.1f,  0.1f, 0.0f,
+		-0.1f, 0.1f, 0.0f,
+		0.1f, 0.1f, 0.0f,
 	};
 
 	static GLfloat* rain_position = new GLfloat[MaxParticles * 4];
@@ -538,8 +562,20 @@ int main(void)
 	static const GLfloat rain_vertexes[] = {
 		-0.01f, -0.1f, 0.0f,
 		0.01f, -0.1f, 0.0f,
-		-0.01f,  0.1f, 0.0f,
-		0.01f,  0.1f, 0.0f,
+		-0.01f, 0.1f, 0.0f,
+		0.01f, 0.1f, 0.0f,
+	};
+
+	static GLfloat* splash_position = new GLfloat[MaxParticles * 4];
+	static GLubyte* splash_color = new GLubyte[MaxParticles * 4];
+	for (int i = 0; i < MaxParticles; i++) {
+		SplashParticlesContainer[i].life = -1.0f;
+		SplashParticlesContainer[i].cameradistance = -1.0f;
+	}
+	static const GLfloat splash_vertexes[] = {
+		0.0f, 0.0f, 0.0f,
+		-0.2f, 0.1f, 0.0f,
+		0.2f, 0.1f, 0.0f,
 	};
 
 	/* CAR */
@@ -682,6 +718,25 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, RainColorVBO);
 	glBufferData(GL_ARRAY_BUFFER, MaxParticles * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW);
 
+	/* SPLASH */
+	// Create Vertex Array Object
+	GLuint SplashVAO;
+	glGenVertexArrays(1, &SplashVAO);
+	glBindVertexArray(SplashVAO);
+	// Create a Vertex Buffer Object and copy the vertex data to it
+	GLuint SplashVBO;
+	glGenBuffers(1, &SplashVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, SplashVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(splash_vertexes), splash_vertexes, GL_STATIC_DRAW);
+	GLuint SplashPositionVBO;
+	glGenBuffers(1, &SplashPositionVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, SplashPositionVBO);
+	glBufferData(GL_ARRAY_BUFFER, MaxParticles * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	GLuint SplashColorVBO;
+	glGenBuffers(1, &SplashColorVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, SplashColorVBO);
+	glBufferData(GL_ARRAY_BUFFER, MaxParticles * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW);
+
 	// Create and compile our GLSL program from the shaders
 	GLuint CarProgram = LoadShaders("CarVertexShader.vertexshader", "CarFragmentShader.fragmentshader");
 	GLuint BackwheelProgram = LoadShaders("BackWheelVertexShader.vertexshader", "WheelFragmentShader.fragmentshader");
@@ -742,7 +797,7 @@ int main(void)
 		if (currentTime - lastTimeFPS >= 1.0) {
 			printf("FPS : %f (%f ms/frame)\n", double(nbFrames), 1000.0 / double(nbFrames));
 			nbFrames = 0;
-			lastTimeFPS += 1.0;
+			lastTimeFPS += 1.0; 
 		}
 
 		// Compute the MVP matrix from keyboard and mouse input
@@ -1107,6 +1162,19 @@ int main(void)
 					rain_color[4 * rainParticlesCount + 1] = p.g;
 					rain_color[4 * rainParticlesCount + 2] = p.b;
 					rain_color[4 * rainParticlesCount + 3] = p.a;
+					// Collision
+					if (p.pos.x >= -0.9f && p.pos.x <= 0.9f && p.pos.y >= 0.55f && p.pos.y <= 0.65f && p.pos.z >= -0.5f && p.pos.z <= 0.5f) {
+						int splashParticleIndex = FindUnusedSplashParticle();
+						SplashParticlesContainer[splashParticleIndex].life = 0.1f;
+						SplashParticlesContainer[splashParticleIndex].pos = glm::vec3(p.pos.x, p.pos.y, p.pos.z);
+						SplashParticlesContainer[splashParticleIndex].speed = glm::vec3(0.0f, 0.0f, 0.0f);
+						// Random color
+						SplashParticlesContainer[splashParticleIndex].r = rand() % 256;
+						SplashParticlesContainer[splashParticleIndex].g = rand() % 256;
+						SplashParticlesContainer[splashParticleIndex].b = rand() % 256;
+						SplashParticlesContainer[splashParticleIndex].a = (rand() % 256) / 3;
+						SplashParticlesContainer[splashParticleIndex].size = (rand() % 1000) / 2000.0f + 0.1f;
+					}
 				}
 				else {
 					// Particles that just died will be put at the end of the buffer in SortParticles()
@@ -1174,6 +1242,92 @@ int main(void)
 		glVertexAttribDivisor(2, 1); // color : one per quad                                  -> 1
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, rainParticlesCount);
 
+		/* SPLASH */
+		// Simulate all particles
+		int splashParticlesCount = 0;
+		for (int i = 0; i < MaxParticles; i++) {
+			Particle& p = SplashParticlesContainer[i];
+			if (p.life > 0.0f) {
+				// Decrease life
+				p.life -= delta;
+				if (p.life > 0.0f) {
+					p.cameradistance = glm::length2(p.pos - RainCameraPosition);
+					// Fill the GPU buffer
+					splash_position[4 * splashParticlesCount + 0] = p.pos.x;
+					splash_position[4 * splashParticlesCount + 1] = p.pos.y;
+					splash_position[4 * splashParticlesCount + 2] = p.pos.z;
+					splash_position[4 * splashParticlesCount + 3] = p.size;
+					splash_color[4 * splashParticlesCount + 0] = p.r;
+					splash_color[4 * splashParticlesCount + 1] = p.g;
+					splash_color[4 * splashParticlesCount + 2] = p.b;
+					splash_color[4 * splashParticlesCount + 3] = p.a;
+				}
+				else {
+					// Particles that just died will be put at the end of the buffer in SortParticles()
+					p.cameradistance = -1.0f;
+				}
+				splashParticlesCount++;
+			}
+		}
+		SortSplashParticles();
+		// Use our shader
+		glUseProgram(RainProgram);
+		// Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, RainTexture);
+		// Set our "myTextureSampler" sampler to use Texture Unit 0
+		glUniform1i(RainTextureID, 0);
+		// Send our transformation to the currently bound shader, 
+		// in the "MVP" uniform
+		glUniform3f(RainCameraRightMatrix, RainViewMatrix[0][0], RainViewMatrix[1][0], RainViewMatrix[2][0]);
+		glUniform3f(RainCameraUpMatrix, RainViewMatrix[0][1], RainViewMatrix[1][1], RainViewMatrix[2][1]);
+		glUniformMatrix4fv(RainVPMatrix, 1, GL_FALSE, &RainViewProjectionMatrix[0][0]);
+		// Draw object
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindBuffer(GL_ARRAY_BUFFER, SplashPositionVBO);
+		glBufferData(GL_ARRAY_BUFFER, MaxParticles * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, splashParticlesCount * sizeof(GLfloat) * 4, splash_position);
+		glBindBuffer(GL_ARRAY_BUFFER, SplashColorVBO);
+		glBufferData(GL_ARRAY_BUFFER, MaxParticles * 4 * sizeof(GLubyte), NULL, GL_STREAM_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, splashParticlesCount * sizeof(GLubyte) * 4, splash_color);
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, SplashVBO);
+		glVertexAttribPointer(
+			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+		// Position object
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, SplashPositionVBO);
+		glVertexAttribPointer(
+			1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+			4,                                // size : x + y + z + size => 4
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
+		// Color object
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, SplashColorVBO);
+		glVertexAttribPointer(
+			2,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+			4,                                // size : r + g + b + a => 4
+			GL_UNSIGNED_BYTE,                 // type
+			GL_TRUE,                          // normalized?    *** YES, this means that the unsigned char[4] will be accessible with a vec4 (floats) in the shader ***
+			0,                                // stride
+			(void*)0                          // array buffer offset
+		);
+		glVertexAttribDivisor(0, 0); // particles vertices : always reuse the same 4 vertices -> 0
+		glVertexAttribDivisor(1, 1); // positions : one per quad (its center)                 -> 1
+		glVertexAttribDivisor(2, 1); // color : one per quad                                  -> 1
+		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, splashParticlesCount);
+
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
@@ -1210,6 +1364,9 @@ int main(void)
 	glDeleteBuffers(1, &RainVBO);
 	glDeleteBuffers(1, &RainPositionVBO);
 	glDeleteBuffers(1, &RainColorVBO);
+	glDeleteBuffers(1, &SplashVBO);
+	glDeleteBuffers(1, &SplashPositionVBO);
+	glDeleteBuffers(1, &SplashColorVBO);
 	glDeleteProgram(CarProgram);
 	glDeleteProgram(BackwheelProgram);
 	glDeleteProgram(FrontwheelProgram);
@@ -1229,6 +1386,7 @@ int main(void)
 	glDeleteVertexArrays(1, &SunVAO);
 	glDeleteVertexArrays(1, &SmokeVAO);
 	glDeleteVertexArrays(1, &RainVAO);
+	glDeleteVertexArrays(1, &SplashVAO);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
