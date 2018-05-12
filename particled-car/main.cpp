@@ -1015,10 +1015,10 @@ int main(void)
 			);
 			SmokeParticlesContainer[smokeParticleIndex].speed = smokeMaindir + smokeRandomdir * smokeSpread;
 			// Random color
-			SmokeParticlesContainer[smokeParticleIndex].r = rand() % 256;
-			SmokeParticlesContainer[smokeParticleIndex].g = rand() % 256;
-			SmokeParticlesContainer[smokeParticleIndex].b = rand() % 256;
-			SmokeParticlesContainer[smokeParticleIndex].a = (rand() % 256) / 3;
+			SmokeParticlesContainer[smokeParticleIndex].r = 147;
+			SmokeParticlesContainer[smokeParticleIndex].g = 147;
+			SmokeParticlesContainer[smokeParticleIndex].b = 147;
+			SmokeParticlesContainer[smokeParticleIndex].a = 255;
 			SmokeParticlesContainer[smokeParticleIndex].size = (rand() % 1000) / 2000.0f + 0.1f;
 		}
 		// Simulate all particles
@@ -1135,10 +1135,10 @@ int main(void)
 			);
 			RainParticlesContainer[rainParticleIndex].speed = rainMaindir + rainRandomdir * rainSpread;
 			// Random color
-			RainParticlesContainer[rainParticleIndex].r = rand() % 256;
-			RainParticlesContainer[rainParticleIndex].g = rand() % 256;
-			RainParticlesContainer[rainParticleIndex].b = rand() % 256;
-			RainParticlesContainer[rainParticleIndex].a = (rand() % 256) / 3;
+			RainParticlesContainer[rainParticleIndex].r = 64;
+			RainParticlesContainer[rainParticleIndex].g = 164;
+			RainParticlesContainer[rainParticleIndex].b = 223;
+			RainParticlesContainer[rainParticleIndex].a = 255;
 			RainParticlesContainer[rainParticleIndex].size = (rand() % 1000) / 2000.0f + 0.1f;
 		}
 		// Simulate all particles
