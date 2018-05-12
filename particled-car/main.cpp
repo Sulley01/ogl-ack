@@ -38,6 +38,8 @@ Particle SplashParticlesContainer[MaxParticles];
 int LastUsedSmokeParticle = 0;
 int LastUsedRainParticle = 0;
 int LastUsedSplashParticle = 0;
+float windStrength = 0.05f;
+bool keys[1024];
 
 int FindUnusedSmokeParticle() {
 	for (int i = LastUsedSmokeParticle; i < MaxParticles; i++) {
@@ -105,6 +107,39 @@ void SortSplashParticles() {
 	std::sort(&SplashParticlesContainer[0], &SplashParticlesContainer[MaxParticles]);
 }
 
+void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode)
+{
+	if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action)
+	{
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
+
+	if (key >= 0 && key < 1024)
+	{
+		if (action == GLFW_PRESS)
+		{
+			keys[key] = true;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			keys[key] = false;
+		}
+	}
+}
+
+void DoMovement() {
+	//Wind Strength Control
+	if (keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT])
+	{
+		windStrength += 0.08f;
+	}
+
+	if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT])
+	{
+		windStrength -= 0.08f;
+	}
+}
+
 int main(void)
 {
 	// Initialise GLFW
@@ -137,12 +172,12 @@ int main(void)
 		glfwTerminate();
 		return -1;
 	}
-
+	glfwSetKeyCallback(window, KeyCallback);
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	// Hide the mouse and enable unlimited mouvement
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+	
 	// Set the mouse at the center of the screen
 	glfwPollEvents();
 	glfwSetCursorPos(window, 1024 / 2, 768 / 2);
@@ -1001,12 +1036,13 @@ int main(void)
 		if (smokeNewparticles > (int)(0.016f*10000.0)) {
 			smokeNewparticles = (int)(0.016f*10000.0);
 		}
+		DoMovement();
 		for (int i = 0; i < smokeNewparticles; i++) {
 			int smokeParticleIndex = FindUnusedSmokeParticle();
 			SmokeParticlesContainer[smokeParticleIndex].life = 0.2f;
 			SmokeParticlesContainer[smokeParticleIndex].pos = glm::vec3(-0.9f, -0.4f, 0.0f);
 			float smokeSpread = 1.5f;
-			glm::vec3 smokeMaindir = glm::vec3(-10.0f, 0.0f, 0.0f);
+			glm::vec3 smokeMaindir = glm::vec3(-10.0f, 0.0f, 0.0f+windStrength);
 			// Random direction
 			glm::vec3 smokeRandomdir = glm::vec3(
 				(rand() % 2000 - 1000.0f) / 1000.0f,
