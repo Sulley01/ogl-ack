@@ -1162,7 +1162,7 @@ int main(void)
 			RainParticlesContainer[rainParticleIndex].life = 0.2f;
 			RainParticlesContainer[rainParticleIndex].pos = glm::vec3(0.0f, 2.0f, 0.0f);
 			float rainSpread = 5.0f;
-			glm::vec3 rainMaindir = glm::vec3(0.0f, -10.0f, 0.0f);
+			glm::vec3 rainMaindir = glm::vec3(0.0f+windStrength, -10.0f, 0.0f+windStrength);
 			// Random direction
 			glm::vec3 rainRandomdir = glm::vec3(
 				(rand() % 2000 - 1000.0f) / 1000.0f,
