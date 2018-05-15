@@ -31,7 +31,7 @@ struct Particle {
 	}
 };
 
-const int MaxParticles = 100000;
+const int MaxParticles = 10000;
 Particle SmokeParticlesContainer[MaxParticles];
 Particle RainParticlesContainer[MaxParticles];
 Particle SplashParticlesContainer[MaxParticles];
@@ -1205,10 +1205,10 @@ int main(void)
 						SplashParticlesContainer[splashParticleIndex].pos = glm::vec3(p.pos.x, p.pos.y, p.pos.z);
 						SplashParticlesContainer[splashParticleIndex].speed = glm::vec3(0.0f, 0.0f, 0.0f);
 						// Random color
-						SplashParticlesContainer[splashParticleIndex].r = rand() % 256;
-						SplashParticlesContainer[splashParticleIndex].g = rand() % 256;
-						SplashParticlesContainer[splashParticleIndex].b = rand() % 256;
-						SplashParticlesContainer[splashParticleIndex].a = (rand() % 256) / 3;
+						SplashParticlesContainer[splashParticleIndex].r = 64;
+						SplashParticlesContainer[splashParticleIndex].g = 164;
+						SplashParticlesContainer[splashParticleIndex].b = 223;
+						SplashParticlesContainer[splashParticleIndex].a = 255;
 						SplashParticlesContainer[splashParticleIndex].size = (rand() % 1000) / 2000.0f + 0.1f;
 					}
 				}
